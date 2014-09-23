@@ -5,13 +5,19 @@
 ## Running the dev server
 
 ```bash
-rails server
+$ rails server
 ```
 
 ## Running the tests
 
 ```bash
-rake test
+$ rake test
+```
+
+## Running the linter
+
+```bash
+$ rake lint
 ```
 
 More details soon.
