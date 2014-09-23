@@ -11,7 +11,7 @@ rails server
 ## Running the tests
 
 ```bash
-bundle exec rspec
+rake test
 ```
 
 More details soon.

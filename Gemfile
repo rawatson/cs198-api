@@ -8,6 +8,6 @@ gem 'unicorn'                   # app server
 
 group :development, :test do
   gem 'spring'                    # development app loader
-  gem 'rspec-rails', '~> 3.0.0'   # testing
+  gem 'minitest-rails'
   gem 'rubocop'                   # code quality
 end
