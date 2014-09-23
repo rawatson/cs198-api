@@ -1,5 +1,7 @@
 # cs198-api
 
+[![Build Status](https://drone.io/github.com/cs198/cs198-api/status.png)](https://drone.io/github.com/cs198/cs198-api/latest)
+
 **NOTE:** This is a stub for the future cs198 API.
 
 ## Running the dev server
