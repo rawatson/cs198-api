@@ -22,6 +22,11 @@ describe Person do
       end
     end
 
+    it 'must accept nil citizenship status' do
+      person.citizen_status = nil
+      person.must_be :valid?
+    end
+
     it 'must reject invalid citizenship statuses' do
       ['USCitizen', 'Permanent Alien', 'Martian'].each do |status|
         person.citizen_status = status
@@ -32,6 +37,20 @@ describe Person do
     it 'must allow nil suids' do
       person.suid = nil
       person.must_be :valid?
+    end
+
+    it 'must allow emails' do
+      ['a@b.com', 'user@stanford.edu', 'other_user@cs.stanford.edu'].each do |email|
+        person.email = email
+        person.must_be :valid?
+      end
+    end
+
+    it 'must reject invalid emails' do
+      ['a', '!@b.@#'].each do |email|
+        person.email = email
+        person.wont_be :valid?
+      end
     end
   end
 end
