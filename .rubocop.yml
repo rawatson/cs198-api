@@ -3,6 +3,7 @@ AllCops:
   Exclude:
     - 'bin/**/*'
     - 'db/schema.rb'
+    - 'vendor/**/*'
 Documentation:
   Enabled: false
 Metrics/LineLength:
