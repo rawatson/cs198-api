@@ -6,6 +6,8 @@ gem 'pg'
 gem 'bcrypt'      # password hashing
 gem 'unicorn'     # app server
 
+gem 'email_validator'
+
 group :development, :test do
   gem 'spring'          # development app loader
   gem 'minitest-rails'
