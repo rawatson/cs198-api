@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 gem 'rails', '4.2.0.beta1'
 gem 'rails-api'
-gem 'sqlite3'     # TODO: switch to postgres
+gem 'pg'
 gem 'bcrypt'      # password hashing
 gem 'unicorn'     # app server
 
