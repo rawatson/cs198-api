@@ -1,6 +1,6 @@
 # cs198-api
 
-[![Build Status](https://drone.io/github.com/cs198/cs198-api/status.png)](https://drone.io/github.com/cs198/cs198-api/latest)
+[![Build Status](https://travis-ci.org/cs198/cs198-api.svg?branch=travis-ci)](https://travis-ci.org/cs198/cs198-api)
 
 [Wiki](https://github.com/cs198/cs198-api/wiki)
 
