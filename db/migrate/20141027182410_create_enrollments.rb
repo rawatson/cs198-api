@@ -3,7 +3,8 @@ class CreateEnrollments < ActiveRecord::Migration
     create_table :enrollments do |t|
       t.belongs_to :person
       t.belongs_to :course
-      t.references :position
+      t.string :position
+      t.integer :seniority
     end
   end
 end

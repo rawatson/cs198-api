@@ -29,7 +29,8 @@ ActiveRecord::Schema.define(version: 20141027182410) do
   create_table "enrollments", force: true do |t|
     t.integer "person_id"
     t.integer "course_id"
-    t.integer "position_id"
+    t.string  "position"
+    t.integer "seniority"
   end
 
   create_table "people", force: true do |t|
@@ -52,11 +53,6 @@ ActiveRecord::Schema.define(version: 20141027182410) do
 
   add_index "people", ["suid"], name: "index_people_on_suid", unique: true, using: :btree
   add_index "people", ["sunet_id"], name: "index_people_on_sunet_id", unique: true, using: :btree
-
-  create_table "positions", force: true do |t|
-    t.string  "title"
-    t.integer "seniority"
-  end
 
   create_table "terms", force: true do |t|
     t.string   "year",       null: false
