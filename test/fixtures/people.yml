@@ -1,4 +1,4 @@
-staff_one:
+staff_1:
   email: 'staff_one@stanford.edu'
   suid: '11'
   sunet_id: 'staffuserone'
@@ -6,7 +6,7 @@ staff_one:
   staff: true
   active: true
 
-staff_two:
+staff_2:
   email: 'staff_two@stanford.edu'
   suid: '21'
   sunet_id: 'staffusertwo'
@@ -14,7 +14,7 @@ staff_two:
   staff: true
   active: true
 
-staff_three:
+staff_3:
   email: 'staff_three@stanford.edu'
   suid: '31'
   sunet_id: 'staffuserthree'
@@ -22,21 +22,21 @@ staff_three:
   staff: true
   active: false
 
-student_one:
+student_1:
   email: 'student_one@stanford.edu'
   suid: '12'
   sunet_id: 'studentuserone'
   citizen_status: 'US Citizen'
   staff: false
 
-student_two:
+student_2:
   email: 'student_two@stanford.edu'
   suid: '22'
   sunet_id: 'studentusertwo'
   citizen_status: 'Permanent Resident'
   staff: false
 
-student_three:
+student_3:
   email: 'student_three@stanford.edu'
   suid: '32'
   sunet_id: 'studentuserthree'
