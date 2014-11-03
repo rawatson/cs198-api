@@ -1,12 +1,27 @@
-# Read about fixtures at
-# http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+cs106a_term_1:
+  title: "Programming Methodology"
+  registry_doc_name: "cs-106a"
+  code: "CS106A"
+  website: "cs106a.stanford.edu"
+  term: term_1
 
-# This model initially had no columns defined.  If you add columns to the
-# model remove the '{}' from the fixture names and add the columns immediately
-# below each fixture, per the syntax in the comments below
-#
-one: {}
-# column: value
-#
-two: {}
-#  column: value
+cs106b_term_1:
+  title: "Programming Abstractions"
+  registry_doc_name: "cs-106b"
+  code: "CS106B"
+  website: "cs106b.stanford.edu"
+  term: term_1
+
+cs106a_term_2:
+  title: "Programming Methodology"
+  registry_doc_name: "cs-106a"
+  code: "CS106A"
+  website: "cs106a.stanford.edu"
+  term: term_2
+
+cs106b_term_2:
+  title: "Programming Abstractions"
+  registry_doc_name: "cs-106b"
+  code: "CS106B"
+  website: "cs106b.stanford.edu"
+  term: term_2
