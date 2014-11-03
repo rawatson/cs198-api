@@ -1,17 +1,19 @@
 Rails.application.routes.draw do
-  namespace :lair do
-    resources :helpers, except: [:new, :edit] do
-      member do
-        # get a single helper's shifts
-        resources :shifts, except: [:new, :edit]
+  with_options(except: [:new, :edit]) do |opts|
+    namespace :lair do
+      opts.resources :helpers do
+        member do
+          # get a single helper's shifts
+          opts.resources :shifts
+        end
+
+        collection do
+          # get total helper schedule
+          get :shifts
+        end
       end
 
-      collection do
-        # get total helper schedule
-        get :shifts
-      end
+      opts.resources :help_requests
     end
-
-    resources :help_requests, except: [:new, :edit]
   end
 end
