@@ -12,3 +12,5 @@ Metrics/MethodLength:
   Max: 20
 Style/StringLiterals:
   Enabled: false
+Style/ClassAndModuleChildren:
+  Enabled: false
