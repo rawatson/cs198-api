@@ -1,7 +1,14 @@
 class HelperCheckin < ActiveRecord::Base
   belongs_to :person
 
-  validates :person, presence: true
+  # person may only be checked into the queue once
+  validates :person,
+            presence: true,
+            uniqueness: {
+              conditions: -> { where checked_out: false },
+              if: -> (h) { !h.checked_out },
+              message: "is already checked in"
+            }
   validate :validate_person
 
   def validate_person
