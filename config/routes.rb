@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  with_options(except: [:new, :edit]) do |opts|
+  with_options(format: 'json', except: [:new, :edit]) do |opts|
     namespace :lair do
       opts.resources :helpers do
         member do
@@ -9,7 +9,7 @@ Rails.application.routes.draw do
 
         collection do
           # get total helper schedule
-          get :shifts
+          opts.get :shifts
         end
       end
 
