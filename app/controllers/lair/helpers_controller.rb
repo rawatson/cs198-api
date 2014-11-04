@@ -1,6 +1,14 @@
 class Lair::HelpersController < ApplicationController
   def index
-    fail "Not implemented"
+    data = {}
+
+    if params[:inactive]
+      data = HelperCheckin.all.includes(:person).map(&:person)
+    else
+      data = HelperCheckin.where(checked_out: false).includes(:person).map(&:person)
+    end
+
+    render json: { data: data }
   end
 
   def create
