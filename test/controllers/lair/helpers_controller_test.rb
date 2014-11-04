@@ -10,7 +10,7 @@ describe Lair::HelpersController do
 
       data.must_be_instance_of Array # list of people
       data.length.must_be :>, 0
-      data.each { |p| p[:sunet_id].wont_be_nil } # TODO: better person check
+      data.each { |p| p[:checked_out].wont_be_nil } # TODO: improve HelperCheckin format check
     end
 
     it "must work with inactive=false" do
@@ -25,7 +25,7 @@ describe Lair::HelpersController do
       data = JSON.parse(@response.body, symbolize_names: true)[:data]
       data.must_be_instance_of Array # list of people
       data.length.must_be :>, 0
-      data.each { |p| p[:sunet_id].wont_be_nil } # TODO: better person check
+      data.each { |p| p[:checked_out].wont_be_nil } # TODO: improve HelperCheckin format check
     end
 
     it "must work with inactive=true" do
@@ -44,7 +44,7 @@ describe Lair::HelpersController do
       data = JSON.parse(@response.body, symbolize_names: true)[:data]
       data.must_be_instance_of Array # list of people
       data.length.must_be :>, 0
-      data.each { |p| p[:sunet_id].wont_be_nil } # TODO: better person check
+      data.each { |p| p[:checked_out].wont_be_nil } # TODO: improve HelperCheckin format check
     end
   end
 end

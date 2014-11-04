@@ -3,9 +3,9 @@ class Lair::HelpersController < ApplicationController
     data = {}
 
     if params[:inactive]
-      data = HelperCheckin.all.includes(:person).map(&:person)
+      data = HelperCheckin.all
     else
-      data = HelperCheckin.where(checked_out: false).includes(:person).map(&:person)
+      data = HelperCheckin.where(checked_out: false)
     end
 
     render json: { data: data }
