@@ -15,19 +15,15 @@ class Lair::HelpersController < ApplicationController
     fail "Not implemented"
   end
 
-  def shifts
-    fail "Not implemented"
-  end
-
   def show
     fail "Not implemented"
   end
 
-  def update
+  def destroy
     fail "Not implemented"
   end
 
-  def destroy
+  def shifts
     fail "Not implemented"
   end
 end
