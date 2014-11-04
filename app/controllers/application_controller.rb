@@ -1,16 +1,11 @@
 class ApplicationController < ActionController::API
+  include ParamsHelper
+
   before_action :convert_boolean_params
 
   private
 
   def convert_boolean_params
-    params.map do |k, v|
-      case v
-      when "true"
-        params[k] = true
-      when "false"
-        params[k] = false
-      end
-    end
+    self.params = coerce_boolean_strings params unless params.nil?
   end
 end
