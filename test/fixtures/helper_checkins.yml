@@ -1,0 +1,6 @@
+staff_1_checkin_incomplete:
+  person: staff_1
+
+staff_2_checkin_finished:
+  person: staff_2
+  checked_out: true
