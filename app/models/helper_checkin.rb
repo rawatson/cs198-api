@@ -2,9 +2,10 @@ class HelperCheckin < ActiveRecord::Base
   belongs_to :person
 
   validates :person, presence: true
-  validate :person_must_be_staff
+  validate :validate_person
 
-  def person_must_be_staff
+  def validate_person
     errors.add :person, "person must be staff to be a helper" unless person.staff
+    errors.add :person, "person must be active to be a helper" unless person.active
   end
 end
