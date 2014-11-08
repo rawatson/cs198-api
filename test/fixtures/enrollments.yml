@@ -18,12 +18,17 @@ cs106a_term_2_sl:
   seniority: 1
   person: staff_3
   course: cs106a_term_2
-cs106a_term_1_student:
+cs106a_term_1_student_1:
   position: "student"
   seniority: 0
   person: student_1
   course: cs106a_term_1
-cs106a_term_2_student:
+cs106a_term_2_student_2:
+  position: "student"
+  seniority: 0
+  person: student_2
+  course: cs106a_term_2
+cs106a_term_2_student_3:
   position: "student"
   seniority: 0
   person: student_2
