@@ -12,14 +12,44 @@ class Lair::HelpersController < ApplicationController
   end
 
   def create
-    fail "Not implemented"
-  end
+    begin
+      p = Person.find params[:person]
+    rescue
+      return render status: :not_found, json: { message: "Person not found" }
+    end
 
-  def show
-    fail "Not implemented"
+    # idempotent
+    checked_in = HelperCheckin.where(person_id: p, checked_out: false)
+    return render status: :ok, json: { data: checked_in.first } if checked_in.exists?
+
+    h = HelperCheckin.new person: p
+    if h.valid?
+      h.save
+      return render status: :created, json: { data: h }
+    else
+      # TODO: handle errors more robustly
+      return render status: :forbidden,
+                    json: { message: "Must be an active staff member to check in as a helper." }
+    end
   end
 
   def destroy
+    begin
+      h = HelperCheckin.find(params[:id])
+    rescue
+      return render status: :not_found, json: { message: "Helper checkin not found." }
+    end
+
+    return render status: :not_found,
+                  json: { message: "Helper was not checked in" } if h.checked_out
+
+    h.checked_out = true
+    h.save
+
+    head :no_content
+  end
+
+  def show
     fail "Not implemented"
   end
 
