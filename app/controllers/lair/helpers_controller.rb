@@ -50,7 +50,13 @@ class Lair::HelpersController < ApplicationController
   end
 
   def show
-    fail "Not implemented"
+    begin
+      h = HelperCheckin.find(params[:id])
+    rescue
+      return render status: :not_found, json: { message: "Helper checkin not found." }
+    end
+
+    render json: { data: h }
   end
 
   def shifts
