@@ -4,6 +4,7 @@ class CreateHelpRequests < ActiveRecord::Migration
       t.belongs_to :enrollment
       t.text :description
       t.string :location
+      t.boolean :open, default: true
 
       t.timestamps null: false
     end

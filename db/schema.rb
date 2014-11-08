@@ -37,8 +37,9 @@ ActiveRecord::Schema.define(version: 20141108194147) do
     t.integer  "enrollment_id"
     t.text     "description"
     t.string   "location"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.boolean  "open",          default: true
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
   end
 
   create_table "helper_checkins", force: true do |t|
