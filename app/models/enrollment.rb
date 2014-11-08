@@ -1,6 +1,7 @@
 class Enrollment < ActiveRecord::Base
   belongs_to :course
   belongs_to :person
+  has_many :help_requests
 
   # key: position name, value: seniority
   @default_seniorities = {
