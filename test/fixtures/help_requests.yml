@@ -1,0 +1,11 @@
+cs106a_term_1_student_1_help:
+  enrollment: cs106a_term_1_student_1
+  description: "Problem 1"
+  location: "19"
+  open: true
+
+cs106a_term_2_student_2_help:
+  enrollment: cs106a_term_2_student_2
+  description: "Problem 1"
+  location: "17"
+  open: true
