@@ -40,11 +40,13 @@ class Lair::HelpersController < ApplicationController
       return render status: :not_found, json: { message: "Helper checkin not found." }
     end
 
-    return render status: :not_found,
-                  json: { message: "Helper was not checked in" } if h.checked_out
-
-    h.checked_out = true
-    h.save
+    # If they are already checked out, just don't change the timestamp.
+    # Success for idempotency
+    unless h.checked_out
+      h.check_out_time = DateTime.now
+      h.checked_out = true
+      h.save
+    end
 
     head :no_content
   end
