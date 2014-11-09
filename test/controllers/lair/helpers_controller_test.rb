@@ -106,4 +106,25 @@ describe Lair::HelpersController do
       @response.body.length.must_equal 0
     end
   end
+
+  describe :show do
+    it "404's on nonexistent checkins" do
+      get :show, id: "hello"
+      assert_response :missing
+
+      message = JSON.parse(@response.body, symbolize_names: true)[:message]
+      message.must_equal "Helper checkin not found."
+    end
+
+    it "200's on existent checkins" do
+      helper_checkins.each do |h|
+        get :show, id: h.id
+        assert_response :ok
+
+        data = JSON.parse(@response.body, symbolize_names: true)[:data]
+        data[:person_id].must_equal h.person_id
+        data[:checked_out].must_equal h.checked_out
+      end
+    end
+  end
 end
