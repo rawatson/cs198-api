@@ -82,4 +82,28 @@ describe Lair::HelpersController do
       message.must_equal "Must be an active staff member to check in as a helper."
     end
   end
+
+  describe :delete do
+    it "404's on nonexistent checkins" do
+      delete :destroy, id: "hello"
+      assert_response :missing
+
+      message = JSON.parse(@response.body, symbolize_names: true)[:message]
+      message.must_equal "Helper checkin not found."
+    end
+
+    it "204's with no content on success" do
+      delete :destroy, id: helper_checkins(:staff_1_checkin_incomplete).id
+      assert_response :no_content
+
+      @response.body.length.must_equal 0
+    end
+
+    it "204's with no content on already checked out checkins" do
+      delete :destroy, id: helper_checkins(:staff_2_checkin_finished).id
+      assert_response :no_content
+
+      @response.body.length.must_equal 0
+    end
+  end
 end
