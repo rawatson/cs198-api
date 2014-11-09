@@ -44,7 +44,8 @@ ActiveRecord::Schema.define(version: 20141108194147) do
 
   create_table "helper_checkins", force: true do |t|
     t.integer  "person_id"
-    t.boolean  "checked_out", default: false, null: false
+    t.boolean  "checked_out",    default: false, null: false
+    t.datetime "check_out_time"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

@@ -3,6 +3,7 @@ class CreateHelperCheckins < ActiveRecord::Migration
     create_table :helper_checkins do |t|
       t.belongs_to :person
       t.boolean :checked_out, default: false, null: false
+      t.timestamp :check_out_time
 
       t.timestamps
     end
