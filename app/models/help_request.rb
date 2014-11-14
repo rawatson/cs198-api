@@ -10,6 +10,12 @@ class HelpRequest < ActiveRecord::Base
   }, presence: true
   validate :validate_enrollment
 
+  def position
+    HelpRequest.where(
+      "open = :open AND created_at < :time", open: true, time: created_at
+    ).count
+  end
+
   def validate_enrollment
     errors.add(:enrollment, "person must be enrolled as a student " \
                             "to request help") unless enrollment.position == "student"
