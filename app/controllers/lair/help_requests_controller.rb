@@ -1,8 +1,15 @@
 class Lair::HelpRequestsController < ApplicationController
   def index
     open = params[:open].nil? ? true : params[:open]
+    since = params[:since]
 
-    @requests = HelpRequest.where(open: open).order(created_at: :asc).includes(:person, :course)
+    if since.nil?
+      @requests = HelpRequest.where(open: open).order(created_at: :asc).includes(:person, :course)
+    else
+      @requests = HelpRequest.where(
+        "open = :open AND created_at > :since", open: open, since: DateTime.parse(since)
+      ).order(created_at: :desc).includes(:person, :course).reverse
+    end
     render :index
   end
 
