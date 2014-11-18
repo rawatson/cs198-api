@@ -56,6 +56,20 @@ describe Lair::HelpRequestsController do
       end
       data.must_equal sorted
     end
+
+    it "must count results correctly" do
+      [{ opts: { open: false }, expected: 2 },
+       { opts: { open: false, since: "1 May 2013" }, expected: 2 },
+       { opts: { open: false, since: "29 May 2014" }, expected: 1 },
+       { opts: { open: true }, expected: 2 }
+      ].each do |test_case|
+        opts = test_case[:opts].merge format: :json, count: true
+        get :index, opts
+        assert_response :success
+        data = JSON.parse(@response.body, symbolize_names: true)[:data]
+        data[:count].must_equal test_case[:expected]
+      end
+    end
   end
 
   describe :create do
