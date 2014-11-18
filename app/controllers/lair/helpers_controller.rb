@@ -13,7 +13,8 @@ class Lair::HelpersController < ApplicationController
     begin
       p = Person.find params[:person]
     rescue
-      return render status: :not_found, json: { message: "Person not found" }
+      return render status: :not_found, json: { data: {
+        message: "Person not found" } }
     end
 
     # idempotent
@@ -26,8 +27,8 @@ class Lair::HelpersController < ApplicationController
       render :show, status: :created
     else
       # TODO: handle errors more robustly
-      return render status: :forbidden,
-                    json: { message: "Must be an active staff member to check in as a helper." }
+      return render status: :forbidden, json: { data: {
+        message: "Must be an active staff member to check in as a helper." } }
     end
   end
 
@@ -35,7 +36,8 @@ class Lair::HelpersController < ApplicationController
     begin
       h = HelperCheckin.find(params[:id])
     rescue
-      return render status: :not_found, json: { message: "Helper checkin not found." }
+      return render status: :not_found, json: { data: {
+        message: "Helper checkin not found." } }
     end
 
     # If they are already checked out, just don't change the timestamp.
@@ -53,7 +55,8 @@ class Lair::HelpersController < ApplicationController
     begin
       @helper = HelperCheckin.includes(:person).find(params[:id])
     rescue
-      return render status: :not_found, json: { message: "Helper checkin not found." }
+      return render status: :not_found, json: { data: {
+        message: "Helper checkin not found." } }
     end
 
     render :show

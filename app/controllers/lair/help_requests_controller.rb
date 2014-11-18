@@ -8,7 +8,8 @@ class Lair::HelpRequestsController < ApplicationController
     attributes = helper_create_params(params)
     enrollment = Enrollment.find_by(course_id: params[:course_id], person_id: params[:person_id])
 
-    render status: :not_found, json: { message: "Enrollment not found" } if enrollment.nil?
+    render status: :not_found, json: { data: {
+      message: "Enrollment not found" } } if enrollment.nil?
 
     attributes[:enrollment] = enrollment
     @request = HelpRequest.new attributes
@@ -17,23 +18,22 @@ class Lair::HelpRequestsController < ApplicationController
       @request.save
       render :show, status: :created
     else
-      render status: :bad_request, json: {
+      render status: :bad_request, json: { data: {
         message: "Unable to create help request",
-        data: { errors: @request.errors.full_messages }
-      }
+        details: { errors: @request.errors.full_messages } } }
     end
   rescue ActionController::ParameterMissing => e
-    render status: :bad_request, json: {
+    render status: :bad_request, json: { data: {
       message: "Missing required parameter(s)",
-      data: { missing: e.param, required: self.class.creation_params }
-    }
+      details: { missing: e.param, required: self.class.creation_params } } }
   end
 
   def show
     @request = HelpRequest.find(params[:id])
     render :show
   rescue
-    render status: :not_found, json: { message: "Help request not found" }
+    render status: :not_found, json: { data: {
+      message: "Help request not found" } }
   end
 
   def update
@@ -48,7 +48,8 @@ class Lair::HelpRequestsController < ApplicationController
     @request.save
     head status: :no_content
   rescue
-    render status: :not_found, json: { message: "Help request not found" }
+    render status: :not_found, json: { data: {
+      message: "Help request not found" } }
   end
 
   private

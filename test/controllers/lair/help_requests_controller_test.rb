@@ -54,9 +54,9 @@ describe Lair::HelpRequestsController do
                     location: location
       assert_response :bad_request
 
-      res = JSON.parse(@response.body, symbolize_names: true)
-      res[:message].must_equal "Unable to create help request"
-      res[:data][:errors].must_include \
+      data = JSON.parse(@response.body, symbolize_names: true)[:data]
+      data[:message].must_equal "Unable to create help request"
+      data[:details][:errors].must_include \
         "Enrollment only one open help request per enrollment is allowed"
     end
   end
@@ -65,8 +65,8 @@ describe Lair::HelpRequestsController do
     it "must not delete nonexistent requests" do
       delete :destroy, format: :json, id: "not real"
       assert_response :not_found
-      res = JSON.parse(@response.body, symbolize_names: true)
-      res[:message].must_equal "Help request not found"
+      data = JSON.parse(@response.body, symbolize_names: true)[:data]
+      data[:message].must_equal "Help request not found"
     end
 
     it "must set open to false" do
@@ -114,7 +114,7 @@ describe Lair::HelpRequestsController do
       get :show, id: "not real id"
       assert_response :not_found
 
-      data = JSON.parse(@response.body, symbolize_names: true)
+      data = JSON.parse(@response.body, symbolize_names: true)[:data]
       data[:message].must_equal "Help request not found"
     end
   end
