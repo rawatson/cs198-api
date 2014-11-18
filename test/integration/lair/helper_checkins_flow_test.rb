@@ -9,20 +9,20 @@ describe "Lair::HelperCheckinsFlow Integration Test" do
     post "/lair/helpers.json", person: staff.id
     assert_response :created
     data = JSON.parse(response.body, symbolize_names: true)[:data]
-    data[:person_id].must_equal staff.id
+    data[:person][:id].must_equal staff.id
 
     get "/lair/helpers.json"
     assert_response :ok
     data = JSON.parse(response.body, symbolize_names: true)[:data]
     data.must_be :is_a?, Array
-    match = data.select { |h| h[:person_id] == staff.id }
+    match = data.select { |h| h[:person][:id] == staff.id }
     match.length.must_equal 1
     match.first[:checked_out].must_equal false
 
     get "/lair/helpers/#{match.first[:id]}.json"
     assert_response :ok
     data = JSON.parse(response.body, symbolize_names: true)[:data]
-    data[:person_id].must_equal staff.id
+    data[:person][:id].must_equal staff.id
     data[:checked_out].must_equal false
   end
 
