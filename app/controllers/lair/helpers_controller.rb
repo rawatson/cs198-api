@@ -1,14 +1,12 @@
 class Lair::HelpersController < ApplicationController
   def index
-    data = {}
-
     if params[:inactive]
-      data = HelperCheckin.all
+      @helpers = HelperCheckin.all.includes(:person)
     else
-      data = HelperCheckin.where(checked_out: false)
+      @helpers = HelperCheckin.where(checked_out: false).includes(:person)
     end
 
-    render json: { data: data }
+    render :index
   end
 
   def create
@@ -19,13 +17,13 @@ class Lair::HelpersController < ApplicationController
     end
 
     # idempotent
-    checked_in = HelperCheckin.where(person_id: p, checked_out: false)
-    return render status: :ok, json: { data: checked_in.first } if checked_in.exists?
+    @helper = HelperCheckin.includes(:person).find_by(person_id: p, checked_out: false)
+    return render :show unless @helper.nil?
 
-    h = HelperCheckin.new person: p
-    if h.valid?
-      h.save
-      return render status: :created, json: { data: h }
+    @helper = HelperCheckin.new person: p
+    if @helper.valid?
+      @helper.save
+      render :show, status: :created
     else
       # TODO: handle errors more robustly
       return render status: :forbidden,
@@ -53,12 +51,12 @@ class Lair::HelpersController < ApplicationController
 
   def show
     begin
-      h = HelperCheckin.find(params[:id])
+      @helper = HelperCheckin.includes(:person).find(params[:id])
     rescue
       return render status: :not_found, json: { message: "Helper checkin not found." }
     end
 
-    render json: { data: h }
+    render :show
   end
 
   def shifts
