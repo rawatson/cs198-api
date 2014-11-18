@@ -54,8 +54,8 @@ describe Lair::HelpersController do
 
       assert_response :missing
 
-      message = JSON.parse(@response.body, symbolize_names: true)[:message]
-      message.must_equal "Person not found"
+      data = JSON.parse(@response.body, symbolize_names: true)[:data]
+      data[:message].must_equal "Person not found"
     end
 
     it "must 201 on a new checkin" do
@@ -78,8 +78,8 @@ describe Lair::HelpersController do
       post :create, format: :json, person: people(:student_1).id
       assert_response :forbidden
 
-      message = JSON.parse(@response.body, symbolize_names: true)[:message]
-      message.must_equal "Must be an active staff member to check in as a helper."
+      data = JSON.parse(@response.body, symbolize_names: true)[:data]
+      data[:message].must_equal "Must be an active staff member to check in as a helper."
     end
   end
 
@@ -88,8 +88,8 @@ describe Lair::HelpersController do
       delete :destroy, format: :json, id: "hello"
       assert_response :missing
 
-      message = JSON.parse(@response.body, symbolize_names: true)[:message]
-      message.must_equal "Helper checkin not found."
+      data = JSON.parse(@response.body, symbolize_names: true)[:data]
+      data[:message].must_equal "Helper checkin not found."
     end
 
     it "204's with no content on success" do
@@ -112,8 +112,8 @@ describe Lair::HelpersController do
       get :show, format: :json, id: "hello"
       assert_response :missing
 
-      message = JSON.parse(@response.body, symbolize_names: true)[:message]
-      message.must_equal "Helper checkin not found."
+      data = JSON.parse(@response.body, symbolize_names: true)[:data]
+      data[:message].must_equal "Helper checkin not found."
     end
 
     it "200's on existent checkins" do
