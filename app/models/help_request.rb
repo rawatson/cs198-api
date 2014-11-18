@@ -1,7 +1,7 @@
 class HelpRequest < ActiveRecord::Base
   belongs_to :enrollment
-  has_one :person, through: :enrollments
-  has_one :course, through: :enrollments
+  has_one :person, through: :enrollment
+  has_one :course, through: :enrollment
 
   validates :enrollment, uniqueness: {
     conditions: -> { where open: true },
@@ -9,6 +9,12 @@ class HelpRequest < ActiveRecord::Base
     message: "only one open help request per enrollment is allowed"
   }, presence: true
   validate :validate_enrollment
+
+  def position
+    HelpRequest.where(
+      "open = :open AND created_at < :time", open: true, time: created_at
+    ).count
+  end
 
   def validate_enrollment
     errors.add(:enrollment, "person must be enrolled as a student " \
