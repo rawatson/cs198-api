@@ -2,14 +2,19 @@ class Lair::HelpRequestsController < ApplicationController
   def index
     open = params[:open].nil? ? true : params[:open]
     since = params[:since]
+    count = params[:count].nil? ? false : params[:count]
 
     if since.nil?
       @requests = HelpRequest.where(open: open).order(created_at: :asc).includes(:person, :course)
+      return render json: { data: { count: @requests.count } } if count
     else
       @requests = HelpRequest.where(
         "open = :open AND created_at > :since", open: open, since: DateTime.parse(since)
-      ).order(created_at: :desc).includes(:person, :course).reverse
+      ).order(created_at: :desc)
+      return render json: { data: { count: @requests.count } } if count
+      @requests = @requests.includes(:person, :course).reverse
     end
+
     render :index
   end
 
