@@ -1,4 +1,4 @@
 json.data do
-  json.call(@request, :position, :course, :description, :location, :open)
+  json.partial! 'lair/help_requests/help_request', request: @request
   json.person { json.partial! 'people/person_limited', person: @request.person }
 end
