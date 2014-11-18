@@ -1,6 +1,8 @@
 class Lair::HelpRequestsController < ApplicationController
   def index
-    @requests = HelpRequest.where(open: true).order(created_at: :asc).includes(:person, :course)
+    open = params[:open].nil? ? true : params[:open]
+
+    @requests = HelpRequest.where(open: open).order(created_at: :asc).includes(:person, :course)
     render :index
   end
 
