@@ -93,7 +93,7 @@ describe Lair::HelpersController do
     end
 
     it "204's with no content on success" do
-      delete :destroy, format: :json, id: helper_checkins(:staff_1_checkin_incomplete).id
+      delete :destroy, format: :json, id: helper_checkins(:staff_1_checkin).id
       assert_response :no_content
 
       @response.body.length.must_equal 0

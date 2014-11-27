@@ -30,6 +30,14 @@ staff_4:
   staff: true
   active: true
 
+staff_5:
+  email: 'staff_five@stanford.edu'
+  suid: '35'
+  sunet_id: 'staffuserfive'
+  citizen_status: 'US Citizen'
+  staff: true
+  active: true
+
 student_1:
   email: 'student_one@stanford.edu'
   suid: '12'

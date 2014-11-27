@@ -21,7 +21,7 @@ describe HelperCheckin do
   end
 
   it "must not allow multiple active checkins of same person" do
-    active = helper_checkins(:staff_1_checkin_incomplete)
+    active = helper_checkins(:staff_1_checkin)
     h = HelperCheckin.new(person: active.person)
 
     h.wont_be :valid?
@@ -40,11 +40,14 @@ describe HelperCheckin do
     h.checked_out = true
     h.must_be :valid?
 
+    # staff 1 is already checked in
     h2 = HelperCheckin.new(person: people(:staff_1), checked_out: true)
     h2.must_be :valid?
+  end
 
-    active = helper_checkins(:staff_1_checkin_incomplete)
+  it "must reject setting checked_out=true if open requests outstanding" do
+    active = helper_checkins(:staff_1_checkin)
     active.checked_out = true
-    active.must_be :valid?
+    active.wont_be :valid?
   end
 end
