@@ -1,5 +1,6 @@
 class HelperCheckin < ActiveRecord::Base
   belongs_to :person
+  has_many :helper_assignments
 
   # person may only be checked into the queue once
   validates :person,

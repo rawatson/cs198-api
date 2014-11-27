@@ -2,6 +2,7 @@ class HelpRequest < ActiveRecord::Base
   belongs_to :enrollment
   has_one :person, through: :enrollment
   has_one :course, through: :enrollment
+  has_many :helper_assignments
 
   validates :enrollment, uniqueness: {
     conditions: -> { where open: true },
