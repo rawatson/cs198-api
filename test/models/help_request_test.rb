@@ -47,4 +47,20 @@ describe HelpRequest do
         "can only be closed if a closed helper assignment exists"
     end
   end
+
+  describe :current_assignment do
+    it "properly gets current open assignment" do
+      test_cases = [
+        { request: help_requests(:cs106a_term_1_student_1_help_closed), expected: nil },
+        { request: help_requests(:cs106a_term_2_student_2_help),
+          expected: helper_assignments(:staff_1_open_reassigned_assignment) },
+        { request: help_requests(:cs106a_term_1_student_1_help),
+          expected: helper_assignments(:staff_5_open_assignment) }
+      ]
+
+      test_cases.each do |test_case|
+        test_case[:request].current_assignment.must_equal test_case[:expected]
+      end
+    end
+  end
 end
