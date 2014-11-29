@@ -1,9 +1,9 @@
 class HelperAssignment < ActiveRecord::Base
   belongs_to :helper_checkin
   belongs_to :help_request
-  has_one :helper, through: :helper_checkin, class_name: "Person", foreign_key: "person_id"
-  has_one :student, through: :help_request, class_name: "Person", foreign_key: "person_id"
-  has_one :reassignment, class_name: "HelperAssignment", foreign_key: "reassignment_id"
+  has_one :helper, through: :helper_checkin, class_name: "Person", source: "person"
+  has_one :student, through: :help_request, class_name: "Person", source: "person"
+  belongs_to :reassignment, class_name: "HelperAssignment", foreign_key: "reassignment_id"
 
   # Key: closing reason
   # Value: whether or not request gets closed as well
