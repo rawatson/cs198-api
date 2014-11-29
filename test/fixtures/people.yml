@@ -66,3 +66,9 @@ student_3:
   sunet_id: 'studentuserthree'
   citizen_status: 'International'
   staff: false
+
+student_4:
+  email: 'student_three@stanford.edu'
+  suid: '58'
+  sunet_id: 'studentuserfour'
+  staff: false

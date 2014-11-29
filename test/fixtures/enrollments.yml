@@ -38,3 +38,8 @@ cs106a_term_2_student_3:
   seniority: 0
   person: student_3
   course: cs106a_term_2
+cs106a_term_2_student_4:
+  position: "student"
+  seniority: 0
+  person: student_4
+  course: cs106a_term_2
