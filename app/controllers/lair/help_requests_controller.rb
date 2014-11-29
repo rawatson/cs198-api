@@ -84,8 +84,7 @@ class Lair::HelpRequestsController < ApplicationController
       request.save validate: false
 
       return if assignment.valid? && request.valid?
-      err = CS198::RecordsNotValid.new assignment: assignment, request: request
-      fail err
+      fail CS198::RecordsNotValid.new assignment: assignment, request: request
     end
   end
 
