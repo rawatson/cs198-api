@@ -9,7 +9,7 @@ Documentation:
 Metrics/LineLength:
   Max: 100
 Metrics/MethodLength:
-  Max: 20
+  Max: 25
 Style/StringLiterals:
   Enabled: false
 Style/ClassAndModuleChildren:
