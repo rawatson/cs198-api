@@ -1,6 +1,10 @@
 require "test_helper"
 
 describe HelpRequest do
+  it "allows valid requests" do
+    HelpRequest.all.each { |hr| hr.must_be :valid? }
+  end
+
   it "allows help requests for students" do
     hr = HelpRequest.new(enrollment: enrollments(:cs106a_term_2_student_3),
                          description: "Is broked",
@@ -28,5 +32,19 @@ describe HelpRequest do
     new_hr.wont_be :valid?
     new_hr.errors.messages[:enrollment].must_include \
       "only one open help request per enrollment is allowed"
+  end
+
+  it "rejects checked_out=false if no closed helper assignment exists" do
+    reqs = HelpRequest.where open: true
+    reqs.length.must_be :>, 0
+    reqs.each do |hr|
+      hr.must_be :valid?
+      hr.open = false
+      puts "ID: #{hr.id}" if hr.valid?
+      hr.wont_be :valid?
+
+      hr.errors.messages[:open].must_include \
+        "can only be closed if a closed helper assignment exists"
+    end
   end
 end

@@ -10,6 +10,18 @@ class HelpRequest < ActiveRecord::Base
     message: "only one open help request per enrollment is allowed"
   }, presence: true
   validate :validate_enrollment
+  validate :validate_closed
+
+  def validate_closed
+    return if open
+
+    closing_assignment = helper_assignments.select do |a|
+      HelperAssignment.close_status_resolves a.close_status
+    end.length == 0
+
+    errors.add :open, "can only be closed if a closed helper "\
+      "assignment exists" if closing_assignment
+  end
 
   def position
     HelpRequest.where(
