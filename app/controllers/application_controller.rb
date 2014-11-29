@@ -3,6 +3,14 @@ class ApplicationController < ActionController::API
 
   before_action :convert_boolean_params
 
+  protected
+
+  def render_missing_params(missing, required)
+    render status: :bad_request, json: { data: {
+      message: "Missing required parameter(s)",
+      details: { missing: missing, required: required } } }
+  end
+
   private
 
   def convert_boolean_params

@@ -23,9 +23,7 @@ class Lair::HelpRequestsController < ApplicationController
         details: { errors: @request.errors.full_messages } } }
     end
   rescue ActionController::ParameterMissing => e
-    render status: :bad_request, json: { data: {
-      message: "Missing required parameter(s)",
-      details: { missing: e.param, required: self.class.creation_params } } }
+    render_missing_params e.param, self.class.creation_params
   end
 
   def show
