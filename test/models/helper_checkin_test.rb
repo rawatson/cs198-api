@@ -1,7 +1,12 @@
 require "test_helper"
 
 describe HelperCheckin do
-  it "must be valid" do
+  it "must accept valid checkins" do
+    HelperCheckin.count.must_be :>, 0
+    HelperCheckin.all.each { |h| h.must_be :valid? }
+  end
+
+  it "must set checked_out to false by default" do
     h = HelperCheckin.new(person: people(:staff_2))
     h.must_be :valid?
     h.checked_out.must_equal false
@@ -49,5 +54,6 @@ describe HelperCheckin do
     active = helper_checkins(:staff_1_checkin)
     active.checked_out = true
     active.wont_be :valid?
+    active.errors.messages[:checked_out].must_include "may not check out with open assignments"
   end
 end
