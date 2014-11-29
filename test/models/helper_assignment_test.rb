@@ -4,7 +4,7 @@ describe HelperAssignment do
   let(:helper_assignment) { HelperAssignment.new }
 
   it "must validate valid assignments" do
-    helper_assignments.each { |a| a.must_be :valid? }
+    HelperAssignment.all.each { |a| a.must_be :valid? }
   end
 
   it "must provide correct resolution status for close_status_resolves" do
