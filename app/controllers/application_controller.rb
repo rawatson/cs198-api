@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::API
   include ParamsHelper
+  include Errors
 
   before_action :convert_boolean_params
 
