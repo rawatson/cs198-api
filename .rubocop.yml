@@ -14,3 +14,5 @@ Style/StringLiterals:
   Enabled: false
 Style/ClassAndModuleChildren:
   Enabled: false
+Style/RaiseArgs:
+  Enabled: false
