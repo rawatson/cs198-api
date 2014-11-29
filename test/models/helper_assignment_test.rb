@@ -22,7 +22,7 @@ describe HelperAssignment do
   end
 
   it "must reject invalid close status" do
-    a = helper_assignments :staff_1_closed_assignment
+    a = helper_assignments :staff_1_resolved_assignment
     a.close_status = "fake close status"
     a.wont_be :valid?
     a.errors.messages[:close_status].count do |err|
