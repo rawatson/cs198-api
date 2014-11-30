@@ -1,3 +1,3 @@
 json.data do
-  json.partial! 'helper_assignment', assignment: @assignment
+  json.partial! 'lair/helper_assignments/helper_assignment', assignment: @assignment
 end
