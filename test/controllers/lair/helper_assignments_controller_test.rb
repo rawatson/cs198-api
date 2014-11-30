@@ -135,15 +135,58 @@ describe Lair::HelperAssignmentsController do
 
   describe :reassign do
     it "should require the correct parameters" do
+      old = helper_assignments :staff_5_open_assignment
+      new_helper = helper_checkins :staff_6_checkin
+      possible_missing = %w(helper_assignment_id new_helper_id)
 
+      validate_response = lambda do |data|
+        data[:message].must_equal "Missing required parameter(s)"
+        possible_missing.must_include data[:details][:missing]
+        possible_missing.sort.must_equal data[:details][:required].sort
+      end
+
+      # helper_assignment_id must be present for URL to match route
+      options = [{ helper_assignment_id: '' },
+                 { helper_assignment_id: old.id },
+                 { helper_assignment_id: '', new_helper_id: new_helper.id }]
+      options.each do |opts|
+        opts[:format] = :json
+        post :reassign, opts
+        assert_response :bad_request
+        data = JSON.parse(@response.body, symbolize_names: true)[:data]
+        validate_response[data]
+      end
     end
 
     it "should deny reassignment to an already assigned helper" do
+      old = helper_assignments :staff_5_open_assignment
+      new_helper = helper_checkins :staff_1_checkin # already has a checkin
 
+      post :reassign, format: :json, helper_assignment_id: old.id, new_helper_id: new_helper.id
+      assert_response :bad_request
+      data = JSON.parse(@response.body, symbolize_names: true)[:data]
+      data[:message].must_equal "Validation error"
+      data[:details][:errors][:new_assignment].must_include "Helper checkin is already assigned"
+
+      # check that old assignment is still current
+      HelperAssignment.find(old.id).close_status.must_be :nil?
+      HelpRequest.find(old.help_request.id).current_assignment.id.must_equal old.id
     end
 
     it "should create a new assignment and close the old one with status=reassigned" do
+      old = helper_assignments :staff_5_open_assignment
+      new_helper = helper_checkins :staff_6_checkin # already has a checkin
 
+      post :reassign, format: :json, helper_assignment_id: old.id, new_helper_id: new_helper.id
+      assert_response :ok
+      data = JSON.parse(@response.body, symbolize_names: true)[:data]
+      data[:helper][:id].must_equal new_helper.id
+      data[:help_request][:id].must_equal old.help_request.id
+
+      # check if old assignment is now reassigned
+      old_assignment = HelperAssignment.find(old.id)
+      old_assignment.close_status.must_equal "reassigned"
+      old_assignment.reassignment_id.must_equal data[:id]
     end
   end
 end
