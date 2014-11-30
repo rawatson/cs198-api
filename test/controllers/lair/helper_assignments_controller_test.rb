@@ -66,19 +66,58 @@ describe Lair::HelperAssignmentsController do
 
   describe :create do
     it "should require the correct parameters" do
+      req = help_requests :cs106a_term_2_student_4_help_unassigned
+      helper = helper_checkins :staff_6_checkin
+      possible_missing = %w(helper_id help_request_id)
 
+      validate_response = lambda do |data|
+        data[:message].must_equal "Missing required parameter(s)"
+        possible_missing.must_include data[:details][:missing]
+        possible_missing.sort.must_equal data[:details][:required].sort
+      end
+
+      options = [{}, { help_request_id: req.id }, { helper_id: helper.id }]
+      options.each do |opts|
+        opts[:format] = :json
+        post :create, opts
+        assert_response :bad_request
+        data = JSON.parse(@response.body, symbolize_names: true)[:data]
+        validate_response[data]
+      end
     end
 
     it "should deny more than one assignment for a helper" do
+      req = help_requests :cs106a_term_2_student_4_help_unassigned
+      helper = helper_checkins :staff_5_checkin
+      post :create, format: :json, helper_id: helper.id, help_request_id: req.id
+      assert_response :bad_request
+      data = JSON.parse(@response.body, symbolize_names: true)[:data]
 
+      data[:message].must_equal "Validation error"
+      data[:details][:errors].must_include "Helper checkin is already assigned"
     end
 
-    it "should deny more than one request for a student per class" do
+    it "should deny more than one assignment for a request" do
+      req = help_requests :cs106a_term_2_student_2_help
+      helper = helper_checkins :staff_6_checkin
+      post :create, format: :json, helper_id: helper.id, help_request_id: req.id
+      assert_response :bad_request
+      data = JSON.parse(@response.body, symbolize_names: true)[:data]
 
+      data[:message].must_equal "Validation error"
+      data[:details][:errors].must_include "Help request is already assigned"
     end
 
     it "should allow a valid assignment" do
+      req = help_requests :cs106a_term_2_student_4_help_unassigned
+      helper = helper_checkins :staff_6_checkin
+      post :create, format: :json, helper_id: helper.id, help_request_id: req.id
 
+      assert_response :created
+      data = JSON.parse(@response.body, symbolize_names: true)[:data]
+
+      data[:help_request][:id].must_equal req.id
+      data[:helper][:id].must_equal helper.id
     end
   end
 
