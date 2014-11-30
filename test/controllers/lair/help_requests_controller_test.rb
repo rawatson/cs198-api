@@ -36,7 +36,8 @@ describe Lair::HelpRequestsController do
     end
 
     it "must filter by since timestamp" do
-      get :index, format: :json, open: false, since: "29 May 2014"
+      timestamp = "29 May 2014"
+      get :index, format: :json, open: false, since: timestamp
       assert_response :success
       data = JSON.parse(@response.body, symbolize_names: true)[:data]
       data.length.must_be :>, 0
@@ -44,6 +45,10 @@ describe Lair::HelpRequestsController do
       ids = data.map { |r| r[:id] }
       ids.wont_include help_requests(:cs106a_term_2_student_3_help_closed).id
       ids.must_include help_requests(:cs106a_term_1_student_1_help_closed).id
+
+      data.each do |req|
+        DateTime.parse(req[:created_at]).must_be :>, DateTime.parse(timestamp)
+      end
     end
 
     it "must sort properly with since timestamp" do
