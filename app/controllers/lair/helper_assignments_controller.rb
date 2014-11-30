@@ -30,7 +30,9 @@ class Lair::HelperAssignmentsController < ApplicationController
                                        help_request_id: p[:help_request_id],
                                        claim_time: DateTime.now
     @assignment.save!
-    render :show
+    render :show, status: :created
+  rescue ActionController::ParameterMissing => e
+    render_missing_params e.param, self.class.creation_params
   rescue ActiveRecord::RecordInvalid
     render_validation_error @assignment
   end
