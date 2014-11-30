@@ -5,5 +5,8 @@ staff_2_checkin_finished:
   person: staff_2
   checked_out: true
 
+staff_6_checkin:
+  person: staff_6
+
 staff_5_checkin:
   person: staff_5
