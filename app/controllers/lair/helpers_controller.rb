@@ -13,7 +13,7 @@ class Lair::HelpersController < ApplicationController
     p = Person.find params[:person]
 
     # idempotent
-    @helper = HelperCheckin.includes(:person).find_by(person_id: p, checked_out: false)
+    @helper = HelperCheckin.includes(:person).find_by person_id: p, checked_out: false
     return render :show unless @helper.nil?
 
     @helper = HelperCheckin.new person: p
@@ -22,11 +22,11 @@ class Lair::HelpersController < ApplicationController
       render :show, status: :created
     else
       # TODO: handle errors more robustly
-      return render status: :forbidden, json: { data: {
+      render status: :forbidden, json: { data: {
         message: "Must be an active staff member to check in as a helper." } }
     end
   rescue
-    return render status: :not_found, json: { data: {
+    render status: :not_found, json: { data: {
       message: "Person not found" } }
   end
 
@@ -43,12 +43,12 @@ class Lair::HelpersController < ApplicationController
 
     head :no_content
   rescue ActiveRecord::RecordNotFound
-    return render status: :not_found, json: { data: {
+    render status: :not_found, json: { data: {
       message: "Helper checkin not found." } }
   end
 
   def show
-    @helper = HelperCheckin.includes(:person).find(params[:id])
+    @helper = HelperCheckin.includes(:person).find params[:id]
     render :show
   rescue ActiveRecord::RecordNotFound
     return render status: :not_found, json: { data: {
