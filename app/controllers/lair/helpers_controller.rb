@@ -10,15 +10,10 @@ class Lair::HelpersController < ApplicationController
   end
 
   def create
-    begin
-      p = Person.find params[:person]
-    rescue
-      return render status: :not_found, json: { data: {
-        message: "Person not found" } }
-    end
+    p = Person.find params[:person]
 
     # idempotent
-    @helper = HelperCheckin.includes(:person).find_by(person_id: p, checked_out: false)
+    @helper = HelperCheckin.includes(:person).find_by person_id: p, checked_out: false
     return render :show unless @helper.nil?
 
     @helper = HelperCheckin.new person: p
@@ -27,18 +22,16 @@ class Lair::HelpersController < ApplicationController
       render :show, status: :created
     else
       # TODO: handle errors more robustly
-      return render status: :forbidden, json: { data: {
+      render status: :forbidden, json: { data: {
         message: "Must be an active staff member to check in as a helper." } }
     end
+  rescue
+    render status: :not_found, json: { data: {
+      message: "Person not found" } }
   end
 
   def destroy
-    begin
-      h = HelperCheckin.find(params[:id])
-    rescue
-      return render status: :not_found, json: { data: {
-        message: "Helper checkin not found." } }
-    end
+    h = HelperCheckin.find(params[:id])
 
     # If they are already checked out, just don't change the timestamp.
     # Success for idempotency
@@ -49,17 +42,29 @@ class Lair::HelpersController < ApplicationController
     end
 
     head :no_content
+  rescue ActiveRecord::RecordNotFound
+    render status: :not_found, json: { data: {
+      message: "Helper checkin not found." } }
   end
 
   def show
-    begin
-      @helper = HelperCheckin.includes(:person).find(params[:id])
-    rescue
-      return render status: :not_found, json: { data: {
-        message: "Helper checkin not found." } }
-    end
-
+    @helper = HelperCheckin.includes(:person).find params[:id]
     render :show
+  rescue ActiveRecord::RecordNotFound
+    render status: :not_found, json: { data: {
+      message: "Helper checkin not found." } }
+  end
+
+  def current_assignment
+    helper = HelperCheckin.find params[:id]
+    @assignment = helper.current_assignment
+
+    return render status: :not_found, json: { data: {
+      message: "Not currently assigned to a help request" } } if @assignment.nil?
+    render "lair/helper_assignments/show"
+  rescue ActiveRecord::RecordNotFound
+    render status: :not_found, json: { data: {
+      message: "Helper checkin not found." } }
   end
 
   def shifts

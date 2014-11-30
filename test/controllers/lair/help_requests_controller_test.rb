@@ -55,7 +55,7 @@ describe Lair::HelpRequestsController do
       assert_response :bad_request
 
       data = JSON.parse(@response.body, symbolize_names: true)[:data]
-      data[:message].must_equal "Unable to create help request"
+      data[:message].must_equal "Validation error"
       data[:details][:errors].must_include \
         "Enrollment only one open help request per enrollment is allowed"
     end
@@ -69,32 +69,74 @@ describe Lair::HelpRequestsController do
       data[:message].must_equal "Help request not found"
     end
 
-    it "must set open to false" do
+    it "must not close requests that do not have any assignments" do
+      r = help_requests :cs106a_term_2_student_4_help_unassigned
+      delete :destroy, format: :json, id: r.id, reason: "resolved"
+      assert_response :bad_request
+      data = JSON.parse(@response.body, symbolize_names: true)[:data]
+      data[:message].must_equal "Cannot close a request without first assigning it to a helper"
+    end
+
+    it "must require a reason" do
+      r = help_requests :cs106a_term_2_student_2_help
+      delete :destroy, format: :json, id: r.id
+      assert_response :bad_request
+      data = JSON.parse(@response.body, symbolize_names: true)[:data]
+
+      data[:message].must_equal "Missing required parameter(s)"
+      data[:details][:missing].must_equal "reason"
+    end
+
+    it "must fail on an invalid reason" do
+      r = help_requests :cs106a_term_2_student_2_help
+      delete :destroy, format: :json, id: r.id, reason: "invalid reason"
+      assert_response :bad_request
+      data = JSON.parse(@response.body, symbolize_names: true)[:data]
+
+      data[:message].must_equal "Validation error"
+      data[:details][:errors][:assignment].must_include \
+        'Close status must be one of ["resolved", "reassigned", "left"]'
+
+      req = HelpRequest.find r.id
+      req.open.must_equal true
+      req.helper_assignments.select do |a|
+        HelperAssignment.close_status_resolves a.close_status
+      end.length.must_equal 0
+    end
+
+    it "must set open to false and close the assignment" do
       r = help_requests(:cs106a_term_2_student_2_help)
 
-      delete :destroy, format: :json, id: r.id
+      delete :destroy, format: :json, id: r.id, reason: "resolved"
       assert_response :no_content
       @response.body.length.must_equal 0
 
-      get :show, format: :json, id: r.id
-      assert_response :ok
-      data = JSON.parse(@response.body, symbolize_names: true)[:data]
-      data[:id].must_equal r.id
-      data[:open].must_equal false
+      # check integrity of result
+      req = HelpRequest.find r.id
+      req.open.must_equal false
+      req.current_assignment.must_equal nil
+      req.helper_assignments.each { |a| a.close_status.wont_be :nil? }
+      req.helper_assignments.select { |a| a.close_status == "resolved" }.length.must_equal 1
+      req.helper_assignments.select do |a|
+        HelperAssignment.close_status_resolves a.close_status
+      end.length.must_equal 1
     end
 
     it "must be idempotent with already deleted requests" do
-      r = help_requests(:cs106a_term_2_student_3_help_closed)
+      HelpRequest.where(open: false).each do |r|
+        delete :destroy, format: :json, id: r.id
+        assert_response :no_content
+        @response.body.length.must_equal 0
 
-      delete :destroy, format: :json, id: r.id
-      assert_response :no_content
-      @response.body.length.must_equal 0
-
-      get :show, format: :json, id: r.id
-      assert_response :ok
-      data = JSON.parse(@response.body, symbolize_names: true)[:data]
-      data[:id].must_equal r.id
-      data[:open].must_equal false
+        # check integrity of result
+        req = HelpRequest.find r.id
+        req.open.must_equal false
+        req.current_assignment.must_equal nil
+        req.helper_assignments.each { |a| a.close_status.wont_be :nil? }
+        req.helper_assignments.select do |a|
+          HelperAssignment.close_status_resolves a.close_status
+        end.length.must_equal 1
+      end
     end
   end
 
@@ -116,6 +158,24 @@ describe Lair::HelpRequestsController do
 
       data = JSON.parse(@response.body, symbolize_names: true)[:data]
       data[:message].must_equal "Help request not found"
+    end
+  end
+
+  describe :current_assignment do
+    it "gets correct assignments" do
+      HelpRequest.all.each do |req|
+        get :current_assignment, format: :json, help_request_id: req.id
+        data = JSON.parse(@response.body, symbolize_names: true)[:data]
+
+        if req.current_assignment.nil?
+          assert_response :not_found
+          data[:message].must_equal "No helper currently assigned"
+        else
+          assert_response :ok
+          data[:id].must_equal req.current_assignment.id
+          data[:help_request][:id].must_equal req.id
+        end
+      end
     end
   end
 end

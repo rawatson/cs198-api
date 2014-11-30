@@ -127,4 +127,22 @@ describe Lair::HelpersController do
       end
     end
   end
+
+  describe :current_assignment do
+    it "gets correct assignments" do
+      HelperCheckin.all.each do |h|
+        get :current_assignment, format: :json, id: h.id
+        data = JSON.parse(@response.body, symbolize_names: true)[:data]
+
+        if h.current_assignment.nil?
+          assert_response :not_found
+          data[:message].must_equal "Not currently assigned to a help request"
+        else
+          assert_response :ok
+          data[:id].must_equal h.current_assignment.id
+          data[:helper][:id].must_equal h.id
+        end
+      end
+    end
+  end
 end

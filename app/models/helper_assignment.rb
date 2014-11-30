@@ -53,7 +53,7 @@ class HelperAssignment < ActiveRecord::Base
 
   def validate_close_time
     valid_close_time = close_time.nil? || (close_time > claim_time)
-    errors.add :close_time, "Close time must occur after claim time" unless valid_close_time
+    errors.add :close_time, "must occur after claim time" unless valid_close_time
   end
 
   def validate_helper

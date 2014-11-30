@@ -7,6 +7,12 @@ Rails.application.routes.draw do
         member do
           # get a single helper's shifts
           opts.resources :shifts
+
+          opts.resources :helper_assignments, path: "assignments", only: [:index] do
+            collection do
+              get :current, to: "helpers#current_assignment"
+            end
+          end
         end
 
         collection do
@@ -15,7 +21,17 @@ Rails.application.routes.draw do
         end
       end
 
-      opts.resources :help_requests
+      opts.resources :help_requests do
+        opts.resources :helper_assignments, path: "assignments", only: [:index, :create] do
+          collection do
+            get :current, to: "help_requests#current_assignment"
+          end
+        end
+      end
+
+      opts.resources :helper_assignments, only: [:show, :index, :create] do
+        post :reassign
+      end
     end
   end
 end
