@@ -38,16 +38,16 @@ class Lair::HelperAssignmentsController < ApplicationController
   end
 
   def reassign
-    params = enforce_reassignment_params params
-    old = HelperAssignment.find params[:helper_assignment_id]
+    p = enforce_reassignment_params params
+    old = HelperAssignment.find p[:helper_assignment_id]
     @assignment = reassign_request old, p[:new_helper_id]
     render :show
   rescue CS198::RecordsNotValid => e
     render status: :bad_request, json: { data: {
       message: "Validation error",
       details: { errors: {
-        request: e.records[:request].errors.full_messages,
-        assignment: e.records[:assignment].errors.full_messages } }
+        original_assignment: e.records[:original_assignment].errors.full_messages,
+        new_assignment: e.records[:new_assignment].errors.full_messages } }
     } }
   rescue ActiveRecord::RecordNotFound
     render status: :not_found, json: { data: {
@@ -85,16 +85,17 @@ class Lair::HelperAssignmentsController < ApplicationController
     new_assignment = HelperAssignment.new helper_checkin_id: new_helper_id,
                                           help_request: old_assignment.help_request,
                                           claim_time: DateTime.now
-    orig.close_time = orig.claim_time
-    orig.close_status = "reassigned"
-    orig.reassignment = new_assignment
+    old_assignment.close_time = old_assignment.claim_time
+    old_assignment.close_status = "reassigned"
+    old_assignment.reassignment = new_assignment
 
-    orig.transaction do
+    old_assignment.transaction do
       new_assignment.save validate: false
-      orig.save validate: false
+      old_assignment.save validate: false
 
-      return if assignment.valid? && request.valid?
-      fail CS198::RecordsNotValid.new original_assignment: orig, new_assignment: @assignment
+      return if new_assignment.valid? && old_assignment.valid?
+      fail CS198::RecordsNotValid.new original_assignment: old_assignment,
+                                      new_assignment: new_assignment
     end
 
     new_assignment
