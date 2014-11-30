@@ -51,7 +51,19 @@ class Lair::HelpersController < ApplicationController
     @helper = HelperCheckin.includes(:person).find params[:id]
     render :show
   rescue ActiveRecord::RecordNotFound
+    render status: :not_found, json: { data: {
+      message: "Helper checkin not found." } }
+  end
+
+  def current_assignment
+    helper = HelperCheckin.find params[:id]
+    @assignment = helper.current_assignment
+
     return render status: :not_found, json: { data: {
+      message: "Not currently assigned to a help request" } } if @assignment.nil?
+    render "lair/helper_assignments/show"
+  rescue ActiveRecord::RecordNotFound
+    render status: :not_found, json: { data: {
       message: "Helper checkin not found." } }
   end
 
