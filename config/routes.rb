@@ -10,7 +10,7 @@ Rails.application.routes.draw do
 
           opts.resources :helper_assignments, path: "assignments", only: [:index] do
             collection do
-              get "current", to: "helpers#current_assignment"
+              get :current, to: "helpers#current_assignment"
             end
           end
         end
@@ -24,13 +24,13 @@ Rails.application.routes.draw do
       opts.resources :help_requests do
         opts.resources :helper_assignments, path: "assignments", only: [:index, :create] do
           collection do
-            get "current", to: "help_requests#current_assignment"
+            get :current, to: "help_requests#current_assignment"
           end
         end
       end
 
       opts.resources :helper_assignments, only: [:show, :index, :create] do
-        post "reassign", to: "help_requests#reassign"
+        post :reassign
       end
     end
   end
