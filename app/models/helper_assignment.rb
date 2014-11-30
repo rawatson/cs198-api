@@ -32,6 +32,12 @@ class HelperAssignment < ActiveRecord::Base
                              if: -> (a) { a.reassignment.nil? },
                              message: "is already assigned"
                            }
+  validates :helper_checkin, presence: true,
+                             uniqueness: {
+                               conditions: -> { where close_status: nil },
+                               if: -> (a) { a.close_status.nil? },
+                               message: "is already assigned"
+                             }
   validates :close_time, presence: { if: -> (a) { !a.close_status.nil? } }
   validates :close_status, presence: { if: -> (a) { !a.close_time.nil? } }
   validates :close_status, inclusion: { in: close_statuses,
