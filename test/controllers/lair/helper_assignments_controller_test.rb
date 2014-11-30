@@ -84,7 +84,13 @@ describe Lair::HelperAssignmentsController do
 
   describe :show do
     it "should show assignments by id properly" do
-
+      HelperAssignment.count.must_be :>, 0
+      HelperAssignment.all.each do |a|
+        get :show, format: :json, id: a.id
+        assert_response :success
+        data = JSON.parse(@response.body, symbolize_names: true)[:data]
+        data[:id].must_equal a.id
+      end
     end
   end
 

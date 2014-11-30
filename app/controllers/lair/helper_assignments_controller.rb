@@ -15,7 +15,7 @@ class Lair::HelperAssignmentsController < ApplicationController
 
   def show
     params.require :id
-    @h = HelperAssignment.find params[:id]
+    @assignment = HelperAssignment.find params[:id]
     render :show
   rescue ActiveRecord::RecordNotFound
     render status: :not_found, json: { data: {
