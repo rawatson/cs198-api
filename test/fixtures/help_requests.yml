@@ -25,3 +25,9 @@ cs106a_term_2_student_3_help_closed:
   location: "42"
   open: false
   created_at: "1 Jun 2014"
+
+cs106a_term_2_student_4_help_unassigned:
+  enrollment: cs106a_term_2_student_4
+  description: "Not assigned"
+  location: "34"
+  created_at: "6 Jun 2014"

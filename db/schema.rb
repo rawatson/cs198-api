@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141114050541) do
+ActiveRecord::Schema.define(version: 20141118182959) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -42,6 +42,19 @@ ActiveRecord::Schema.define(version: 20141114050541) do
     t.boolean  "open",          default: true
     t.datetime "created_at",                   null: false
     t.datetime "updated_at",                   null: false
+  end
+
+  create_table "helper_assignments", force: true do |t|
+    t.integer  "helper_checkin_id"
+    t.integer  "help_request_id"
+    t.datetime "claim_time",        null: false
+    t.datetime "close_time"
+    t.string   "close_status"
+    t.integer  "reassignment_id"
+    t.text     "student_feedback"
+    t.text     "helper_feedback"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
   end
 
   create_table "helper_checkins", force: true do |t|

@@ -1,7 +1,22 @@
 class ApplicationController < ActionController::API
   include ParamsHelper
+  include Errors
 
   before_action :convert_boolean_params
+
+  protected
+
+  def render_missing_params(missing, required)
+    render status: :bad_request, json: { data: {
+      message: "Missing required parameter(s)",
+      details: { missing: missing, required: required } } }
+  end
+
+  def render_validation_error(instance)
+    render status: :bad_request, json: { data: {
+      message: "Validation error",
+      details: { errors: instance.errors.full_messages } } }
+  end
 
   private
 

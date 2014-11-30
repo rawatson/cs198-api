@@ -1,7 +1,12 @@
 require "test_helper"
 
 describe HelperCheckin do
-  it "must be valid" do
+  it "must accept valid checkins" do
+    HelperCheckin.count.must_be :>, 0
+    HelperCheckin.all.each { |h| h.must_be :valid? }
+  end
+
+  it "must set checked_out to false by default" do
     h = HelperCheckin.new(person: people(:staff_2))
     h.must_be :valid?
     h.checked_out.must_equal false
@@ -21,7 +26,7 @@ describe HelperCheckin do
   end
 
   it "must not allow multiple active checkins of same person" do
-    active = helper_checkins(:staff_1_checkin_incomplete)
+    active = helper_checkins(:staff_1_checkin)
     h = HelperCheckin.new(person: active.person)
 
     h.wont_be :valid?
@@ -40,11 +45,32 @@ describe HelperCheckin do
     h.checked_out = true
     h.must_be :valid?
 
+    # staff 1 is already checked in
     h2 = HelperCheckin.new(person: people(:staff_1), checked_out: true)
     h2.must_be :valid?
+  end
 
-    active = helper_checkins(:staff_1_checkin_incomplete)
+  it "must reject setting checked_out=true if open requests outstanding" do
+    active = helper_checkins(:staff_1_checkin)
     active.checked_out = true
-    active.must_be :valid?
+    active.wont_be :valid?
+    active.errors.messages[:checked_out].must_include "may not check out with open assignments"
+  end
+
+  describe :current_assignment do
+    it "properly gets current open assignment" do
+      test_cases = [
+        { helper: helper_checkins(:staff_2_checkin_finished), expected: nil },
+        { helper: helper_checkins(:staff_6_checkin), expected: nil },
+        { helper: helper_checkins(:staff_1_checkin),
+          expected: helper_assignments(:staff_1_open_reassigned_assignment) },
+        { helper: helper_checkins(:staff_5_checkin),
+          expected: helper_assignments(:staff_5_open_assignment) }
+      ]
+
+      test_cases.each do |test_case|
+        test_case[:helper].current_assignment.must_equal test_case[:expected]
+      end
+    end
   end
 end

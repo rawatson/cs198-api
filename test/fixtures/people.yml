@@ -30,6 +30,22 @@ staff_4:
   staff: true
   active: true
 
+staff_5:
+  email: 'staff_five@stanford.edu'
+  suid: '35'
+  sunet_id: 'staffuserfive'
+  citizen_status: 'US Citizen'
+  staff: true
+  active: true
+
+staff_6:
+  email: 'staff_six@stanford.edu'
+  suid: '323'
+  sunet_id: 'staffusersix'
+  citizen_status: 'US Citizen'
+  staff: true
+  active: true
+
 student_1:
   email: 'student_one@stanford.edu'
   suid: '12'
@@ -49,4 +65,10 @@ student_3:
   suid: '32'
   sunet_id: 'studentuserthree'
   citizen_status: 'International'
+  staff: false
+
+student_4:
+  email: 'student_three@stanford.edu'
+  suid: '58'
+  sunet_id: 'studentuserfour'
   staff: false

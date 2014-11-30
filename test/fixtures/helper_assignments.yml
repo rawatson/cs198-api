@@ -1,0 +1,32 @@
+staff_5_open_assignment:
+  helper_checkin: staff_5_checkin
+  help_request: cs106a_term_1_student_1_help
+  claim_time: "3 Jun 2014 6:45PM"
+
+staff_1_open_reassigned_assignment:
+  id: 1
+  helper_checkin: staff_1_checkin
+  help_request: cs106a_term_2_student_2_help
+  claim_time: "4 Jun 2014 5:45PM"
+
+staff_1_resolved_assignment:
+  helper_checkin: staff_1_checkin
+  help_request: cs106a_term_1_student_1_help_closed
+  claim_time: "2 Jun 2014 6:45PM"
+  close_time: "2 Jun 2014 7:00PM"
+  close_status: "resolved"
+
+staff_5_reassigned_assignment:
+  helper_checkin: staff_5_checkin
+  help_request: cs106a_term_2_student_2_help
+  claim_time: "2 Jun 2014 5:30PM"
+  close_time: "2 Jun 2014 5:45PM"
+  close_status: "reassigned"
+  reassignment_id: 1
+
+staff_1_left_assignment:
+  helper_checkin: staff_1_checkin
+  help_request: cs106a_term_2_student_3_help_closed
+  claim_time: "1 Jun 2014 6:45PM"
+  close_time: "1 Jun 2014 7:00PM"
+  close_status: "left"

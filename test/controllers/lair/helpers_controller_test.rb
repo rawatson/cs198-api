@@ -93,7 +93,7 @@ describe Lair::HelpersController do
     end
 
     it "204's with no content on success" do
-      delete :destroy, format: :json, id: helper_checkins(:staff_1_checkin_incomplete).id
+      delete :destroy, format: :json, id: helper_checkins(:staff_1_checkin).id
       assert_response :no_content
 
       @response.body.length.must_equal 0
@@ -124,6 +124,24 @@ describe Lair::HelpersController do
         data = JSON.parse(@response.body, symbolize_names: true)[:data]
         data[:person][:id].must_equal h.person_id
         data[:checked_out].must_equal h.checked_out
+      end
+    end
+  end
+
+  describe :current_assignment do
+    it "gets correct assignments" do
+      HelperCheckin.all.each do |h|
+        get :current_assignment, format: :json, id: h.id
+        data = JSON.parse(@response.body, symbolize_names: true)[:data]
+
+        if h.current_assignment.nil?
+          assert_response :not_found
+          data[:message].must_equal "Not currently assigned to a help request"
+        else
+          assert_response :ok
+          data[:id].must_equal h.current_assignment.id
+          data[:helper][:id].must_equal h.id
+        end
       end
     end
   end
