@@ -1,8 +1,6 @@
 require "test_helper"
 
 describe HelperAssignment do
-  let(:helper_assignment) { HelperAssignment.new }
-
   it "must validate valid assignments" do
     HelperAssignment.all.each { |a| a.must_be :valid? }
   end
@@ -87,5 +85,23 @@ describe HelperAssignment do
 
     a.wont_be :valid?
     a.errors.messages[:help_request].must_include "must be open to assign"
+  end
+
+  it "must reject assignment to an assigned help request" do
+    helper = helper_checkins :staff_6_checkin
+    request = help_requests :cs106a_term_1_student_1_help
+    a = HelperAssignment.new help_request: request, helper_checkin: helper
+
+    a.wont_be :valid?
+    a.errors.messages[:help_request].must_include "is already assigned"
+  end
+
+  it "must reject assignment by an already assigned helper" do
+    helper = helper_checkins :staff_1_checkin
+    request = help_requests :cs106a_term_2_student_4_help_unassigned
+    a = HelperAssignment.new help_request: request, helper_checkin: helper
+
+    a.wont_be :valid?
+    a.errors.messages[:helper_checkin].must_include "is already assigned"
   end
 end
