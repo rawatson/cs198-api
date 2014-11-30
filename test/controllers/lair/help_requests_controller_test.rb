@@ -160,4 +160,22 @@ describe Lair::HelpRequestsController do
       data[:message].must_equal "Help request not found"
     end
   end
+
+  describe :current_assignment do
+    it "gets correct assignments" do
+      HelpRequest.all.each do |req|
+        get :current_assignment, format: :json, help_request_id: req.id
+        data = JSON.parse(@response.body, symbolize_names: true)[:data]
+
+        if req.current_assignment.nil?
+          assert_response :not_found
+          data[:message].must_equal "No helper currently assigned"
+        else
+          assert_response :ok
+          data[:id].must_equal req.current_assignment.id
+          data[:help_request][:id].must_equal req.id
+        end
+      end
+    end
+  end
 end
