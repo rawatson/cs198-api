@@ -85,7 +85,7 @@ class Lair::HelperAssignmentsController < ApplicationController
     new_assignment = HelperAssignment.new helper_checkin_id: new_helper_id,
                                           help_request: old_assignment.help_request,
                                           claim_time: DateTime.now
-    old_assignment.close_time = old_assignment.claim_time
+    old_assignment.close_time = new_assignment.claim_time
     old_assignment.close_status = "reassigned"
     old_assignment.reassignment = new_assignment
 
@@ -93,7 +93,7 @@ class Lair::HelperAssignmentsController < ApplicationController
       new_assignment.save validate: false
       old_assignment.save validate: false
 
-      return if new_assignment.valid? && old_assignment.valid?
+      return new_assignment if new_assignment.valid? && old_assignment.valid?
       fail CS198::RecordsNotValid.new original_assignment: old_assignment,
                                       new_assignment: new_assignment
     end
