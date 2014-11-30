@@ -2,21 +2,77 @@ require "test_helper"
 
 describe Lair::HelpRequestsController do
   describe :index do
-    it "must respond with open requests in sorted order" do
-      get :index, format: :json
+    it "must respond with open/closed requests in sorted order" do
+      [nil, false, true].each do |open|
+        opts = { format: :json }
+        opts[:open] = open unless open.nil?
+
+        get :index, opts
+        assert_response :success
+        data = JSON.parse(@response.body, symbolize_names: true)[:data]
+
+        data.must_be_instance_of Array # list of people
+        data.length.must_be :>, 0
+
+        if open.nil?
+          data.each { |r| r[:open].must_equal true }
+        else
+          data.each { |r| r[:open].must_equal open }
+        end
+
+        sorted = data.sort do |a, b|
+          DateTime.parse(a[:created_at]) <=> DateTime.parse(b[:created_at])
+        end
+        data.must_equal sorted
+
+        if open || open.nil?
+          data.each_index do |r_index|
+            data[r_index][:position].must_equal r_index
+          end
+        else
+          data.each { |r| r[:position].must_be_nil }
+        end
+      end
+    end
+
+    it "must filter by since timestamp" do
+      timestamp = "29 May 2014"
+      get :index, format: :json, open: false, since: timestamp
       assert_response :success
       data = JSON.parse(@response.body, symbolize_names: true)[:data]
-
-      data.must_be_instance_of Array # list of people
       data.length.must_be :>, 0
-      data.each { |r| r[:open].must_equal true }
+
+      ids = data.map { |r| r[:id] }
+      ids.wont_include help_requests(:cs106a_term_2_student_3_help_closed).id
+      ids.must_include help_requests(:cs106a_term_1_student_1_help_closed).id
+
+      data.each do |req|
+        DateTime.parse(req[:created_at]).must_be :>, DateTime.parse(timestamp)
+      end
+    end
+
+    it "must sort properly with since timestamp" do
+      get :index, format: :json, open: false, since: "1 May 2013"
+      assert_response :success
+      data = JSON.parse(@response.body, symbolize_names: true)[:data]
+      data.length.must_be :>, 0
       sorted = data.sort do |a, b|
         DateTime.parse(a[:created_at]) <=> DateTime.parse(b[:created_at])
       end
       data.must_equal sorted
+    end
 
-      data.each_index do |r_index|
-        data[r_index][:position].must_equal r_index
+    it "must count results correctly" do
+      [{ opts: { open: false }, expected: 2 },
+       { opts: { open: false, since: "1 May 2013" }, expected: 2 },
+       { opts: { open: false, since: "29 May 2014" }, expected: 1 },
+       { opts: { open: true }, expected: 3 }
+      ].each do |test_case|
+        opts = test_case[:opts].merge format: :json, count: true
+        get :index, opts
+        assert_response :success
+        data = JSON.parse(@response.body, symbolize_names: true)[:data]
+        data[:count].must_equal test_case[:expected]
       end
     end
   end
