@@ -55,7 +55,7 @@ describe Lair::HelpRequestsController do
       assert_response :bad_request
 
       data = JSON.parse(@response.body, symbolize_names: true)[:data]
-      data[:message].must_equal "Unable to create help request"
+      data[:message].must_equal "Validation error"
       data[:details][:errors].must_include \
         "Enrollment only one open help request per enrollment is allowed"
     end
