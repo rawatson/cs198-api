@@ -25,7 +25,7 @@ class Lair::HelperAssignmentsController < ApplicationController
   end
 
   def create
-    p = assignment_create_params params
+    p = enforce_creation_params params
     @assignment = HelperAssignment.new helper_checkin_id: p[:helper_id],
                                        help_request_id: p[:help_request_id],
                                        claim_time: DateTime.now
@@ -65,7 +65,7 @@ class Lair::HelperAssignmentsController < ApplicationController
     attr_reader :reassignment_params
   end
 
-  def assignment_create_params(params)
+  def enforce_creation_params(params)
     self.class.creation_params.each do |p|
       params.require p
     end
