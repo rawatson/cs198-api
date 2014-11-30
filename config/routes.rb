@@ -29,7 +29,9 @@ Rails.application.routes.draw do
         end
       end
 
-      opts.resources :helper_assignments, only: [:show, :index]
+      opts.resources :helper_assignments, only: [:show, :index] do
+        post "reassign", to: "help_requests#reassign"
+      end
     end
   end
 end
