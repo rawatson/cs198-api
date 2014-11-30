@@ -18,9 +18,7 @@ class Lair::HelpRequestsController < ApplicationController
       @request.save
       render :show, status: :created
     else
-      render status: :bad_request, json: { data: {
-        message: "Unable to create help request",
-        details: { errors: @request.errors.full_messages } } }
+      render_validation_error @request
     end
   rescue ActionController::ParameterMissing => e
     render_missing_params e.param, self.class.creation_params

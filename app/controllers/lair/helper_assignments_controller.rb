@@ -32,7 +32,7 @@ class Lair::HelperAssignmentsController < ApplicationController
     @assignment.save!
     render :show
   rescue ActiveRecord::RecordInvalid
-    render_validation_error @h
+    render_validation_error @assignment
   end
 
   def reassign
