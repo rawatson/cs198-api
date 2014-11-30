@@ -56,4 +56,21 @@ describe HelperCheckin do
     active.wont_be :valid?
     active.errors.messages[:checked_out].must_include "may not check out with open assignments"
   end
+
+  describe :current_assignment do
+    it "properly gets current open assignment" do
+      test_cases = [
+        { helper: helper_checkins(:staff_2_checkin_finished), expected: nil },
+        { helper: helper_checkins(:staff_6_checkin), expected: nil },
+        { helper: helper_checkins(:staff_1_checkin),
+          expected: helper_assignments(:staff_1_open_reassigned_assignment) },
+        { helper: helper_checkins(:staff_5_checkin),
+          expected: helper_assignments(:staff_5_open_assignment) }
+      ]
+
+      test_cases.each do |test_case|
+        test_case[:helper].current_assignment.must_equal test_case[:expected]
+      end
+    end
+  end
 end
