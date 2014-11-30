@@ -67,6 +67,18 @@ class Lair::HelpRequestsController < ApplicationController
     render_missing_params e.param, self.class.closing_params
   end
 
+  def current_assignment
+    request = HelpRequest.find params[:help_request_id]
+    @assignment = request.current_assignment
+
+    return render status: :not_found, json: { data: {
+      message: "No helper currently assigned" } } if @assignment.nil?
+    render "lair/helper_assignments/show"
+  rescue ActiveRecord::RecordNotFound
+    render status: :not_found, json: { data: {
+      message: "Help request not found." } }
+  end
+
   private
 
   @creation_params = [:course_id, :person_id, :description, :location]
