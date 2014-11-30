@@ -12,6 +12,12 @@ class ApplicationController < ActionController::API
       details: { missing: missing, required: required } } }
   end
 
+  def render_validation_error(instance)
+    render status: :bad_request, json: { data: {
+      message: "Validation error",
+      details: { errors: instance.errors.full_messages } } }
+  end
+
   private
 
   def convert_boolean_params
