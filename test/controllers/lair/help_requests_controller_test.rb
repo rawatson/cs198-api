@@ -61,7 +61,7 @@ describe Lair::HelpRequestsController do
       [{ opts: { open: false }, expected: 2 },
        { opts: { open: false, since: "1 May 2013" }, expected: 2 },
        { opts: { open: false, since: "29 May 2014" }, expected: 1 },
-       { opts: { open: true }, expected: 2 }
+       { opts: { open: true }, expected: 3 }
       ].each do |test_case|
         opts = test_case[:opts].merge format: :json, count: true
         get :index, opts
