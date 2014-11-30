@@ -29,7 +29,7 @@ class Lair::HelpRequestsController < ApplicationController
   def show
     @request = HelpRequest.find(params[:id])
     render :show
-  rescue
+  rescue ActiveRecord::RecordNotFound
     render status: :not_found, json: { data: {
       message: "Help request not found" } }
   end
