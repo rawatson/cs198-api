@@ -10,12 +10,7 @@ class Lair::HelpersController < ApplicationController
   end
 
   def create
-    begin
-      p = Person.find params[:person]
-    rescue
-      return render status: :not_found, json: { data: {
-        message: "Person not found" } }
-    end
+    p = Person.find params[:person]
 
     # idempotent
     @helper = HelperCheckin.includes(:person).find_by(person_id: p, checked_out: false)
@@ -30,15 +25,13 @@ class Lair::HelpersController < ApplicationController
       return render status: :forbidden, json: { data: {
         message: "Must be an active staff member to check in as a helper." } }
     end
+  rescue
+    return render status: :not_found, json: { data: {
+      message: "Person not found" } }
   end
 
   def destroy
-    begin
-      h = HelperCheckin.find(params[:id])
-    rescue
-      return render status: :not_found, json: { data: {
-        message: "Helper checkin not found." } }
-    end
+    h = HelperCheckin.find(params[:id])
 
     # If they are already checked out, just don't change the timestamp.
     # Success for idempotency
@@ -49,17 +42,17 @@ class Lair::HelpersController < ApplicationController
     end
 
     head :no_content
+  rescue ActiveRecord::RecordNotFound
+    return render status: :not_found, json: { data: {
+      message: "Helper checkin not found." } }
   end
 
   def show
-    begin
-      @helper = HelperCheckin.includes(:person).find(params[:id])
-    rescue
-      return render status: :not_found, json: { data: {
-        message: "Helper checkin not found." } }
-    end
-
+    @helper = HelperCheckin.includes(:person).find(params[:id])
     render :show
+  rescue ActiveRecord::RecordNotFound
+    return render status: :not_found, json: { data: {
+      message: "Helper checkin not found." } }
   end
 
   def shifts
