@@ -54,7 +54,7 @@ describe HelperAssignment do
     a = helper_assignments :staff_5_open_assignment
     a.close_time = "3 Jun 2014 5:00PM"
     a.wont_be :valid?
-    a.errors.messages[:close_time].must_include "Close time must occur after claim time"
+    a.errors.messages[:close_time].must_include "must occur after claim time"
   end
 
   it "must reject close_status == reassigned without reassignment" do
