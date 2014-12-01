@@ -28,6 +28,7 @@ Rails.application.routes.draw do
         opts.resources :helper_assignments, path: "assignments", only: [:index, :create] do
           collection do
             get :current, to: "help_requests#current_assignment"
+            post :reassign
           end
         end
       end
