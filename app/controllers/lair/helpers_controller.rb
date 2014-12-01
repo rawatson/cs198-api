@@ -10,10 +10,11 @@ class Lair::HelpersController < ApplicationController
   end
 
   def create
-    p = Person.find params[:person]
+    p = Person.find_by_id_flexible params[:person]
+    fail ActiveRecord::RecordNotFound if p.nil?
 
     # idempotent
-    @helper = HelperCheckin.includes(:person).find_by person_id: p, checked_out: false
+    @helper = HelperCheckin.includes(:person).find_by person: p, checked_out: false
     return render :show unless @helper.nil?
 
     @helper = HelperCheckin.new person: p
@@ -25,7 +26,7 @@ class Lair::HelpersController < ApplicationController
       render status: :forbidden, json: { data: {
         message: "Must be an active staff member to check in as a helper." } }
     end
-  rescue
+  rescue ActiveRecord::RecordNotFound
     render status: :not_found, json: { data: {
       message: "Person not found" } }
   end
