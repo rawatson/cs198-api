@@ -38,4 +38,6 @@ Rails.application.routes.draw do
       end
     end
   end
+
+  match "(*path)", to: "application#options", via: [:options]
 end
