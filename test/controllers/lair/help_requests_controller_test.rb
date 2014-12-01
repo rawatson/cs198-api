@@ -47,7 +47,7 @@ describe Lair::HelpRequestsController do
       ids.must_include help_requests(:cs106a_term_1_student_1_help_closed).id
 
       data.each do |req|
-        DateTime.parse(req[:created_at]).must_be :>, DateTime.parse(timestamp)
+        DateTime.parse(req[:updated_at]).must_be :>, DateTime.parse(timestamp)
       end
     end
 
