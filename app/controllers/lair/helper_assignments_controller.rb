@@ -38,6 +38,12 @@ class Lair::HelperAssignmentsController < ApplicationController
   end
 
   def reassign
+    if params[:helper_assignment_id].nil? && !params[:help_request_id].nil?
+      request = HelpRequest.find params[:help_request_id]
+      fail ActiveRecord::RecordNotFound if request.current_assignment.nil?
+      params[:helper_assignment_id] = request.current_assignment.id
+    end
+
     p = enforce_reassignment_params params
     old = HelperAssignment.find p[:helper_assignment_id]
     @assignment = reassign_request old, p[:new_helper_id]
