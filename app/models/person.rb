@@ -16,4 +16,12 @@ class Person < ActiveRecord::Base
     p = find_by sunet_id: id if p.nil?
     p
   end
+
+  def courses_taking
+    enrollments.where(position: "student").map(&:course)
+  end
+
+  def courses_staffing
+    enrollments.where.not(position: "student").map(&:course)
+  end
 end
