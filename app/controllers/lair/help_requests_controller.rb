@@ -9,7 +9,7 @@ class Lair::HelpRequestsController < ApplicationController
       return render json: { data: { count: @requests.count } } if count
     else
       @requests = HelpRequest.where(
-        "open = :open AND created_at > :since", open: open, since: DateTime.parse(since)
+        "open = :open AND updated_at > :since", open: open, since: DateTime.parse(since)
       ).order(created_at: :desc)
       return render json: { data: { count: @requests.count } } if count
       @requests = @requests.includes(:person, :course).reverse
