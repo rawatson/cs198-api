@@ -1,3 +1,3 @@
 json.data @helpers do |h|
-  json.partial! "helper", helper: h, current_assignment: true
+  json.partial! "lair/helpers/helper", helper: h
 end
