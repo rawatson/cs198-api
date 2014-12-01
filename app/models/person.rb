@@ -10,4 +10,10 @@ class Person < ActiveRecord::Base
   validates :sunet_id, uniqueness: true
   validates :citizen_status, inclusion: { in: @citizen_types }, allow_nil: true
   validates :email, email: true
+
+  def self.find_by_id_flexible(id)
+    p = find_by id: id
+    p = find_by sunet_id: id if p.nil?
+    p
+  end
 end
