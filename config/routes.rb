@@ -3,6 +3,9 @@ Rails.application.routes.draw do
     opts.resources :people, except: [:new, :edit, :create, :destroy]
 
     namespace :lair do
+      get :status, to: "status#status", format: :json
+      put :status, to: "status#update", format: :json
+
       opts.resources :helpers, except: [:new, :edit, :update] do
         member do
           # get a single helper's shifts
