@@ -39,6 +39,12 @@ class ApplicationController < ActionController::API
       details: { errors: instance.errors.full_messages } } }
   end
 
+  def save_multiple(instances)
+    instances.values.each { |i| i.save validate: false }
+    return unless instances.values.map(&:valid?).include? false
+    fail CS198::RecordsNotValid.new instances
+  end
+
   private
 
   def check_origin(origin)
