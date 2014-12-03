@@ -33,6 +33,10 @@ class HelpRequest < ActiveRecord::Base
     helper_assignments.find_by close_status: nil
   end
 
+  def closing_assignment
+    helper_assignments.find_by close_status: HelperAssignment.terminating_statuses
+  end
+
   def validate_enrollment
     errors.add(:enrollment, "person must be enrolled as a student " \
                             "to request help") unless enrollment.position == "student"
