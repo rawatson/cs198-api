@@ -46,7 +46,7 @@ class Lair::HelperAssignmentsController < ApplicationController
 
     p = enforce_reassignment_params params
     old = HelperAssignment.find p[:helper_assignment_id]
-    @assignment = reassign_request old, p[:new_helper_id]
+    @assignment = reassign_request old, p[:new_helper_id], false
     render :show
   rescue CS198::RecordsNotValid => e
     render status: :bad_request, json: { data: {
@@ -54,6 +54,33 @@ class Lair::HelperAssignmentsController < ApplicationController
       details: { errors: {
         original_assignment: e.records[:original_assignment].errors.full_messages,
         new_assignment: e.records[:new_assignment].errors.full_messages } }
+    } }
+  rescue ActiveRecord::RecordNotFound
+    render status: :not_found, json: { data: {
+      message: "Helper assignment not found" } }
+  rescue ActionController::ParameterMissing => e
+    render_missing_params e.param, self.class.reassignment_params
+  end
+
+  def reopen
+    if params[:helper_assignment_id].nil? && !params[:help_request_id].nil?
+      request = HelpRequest.find params[:help_request_id]
+      return render status: forbidden, json: { data: {
+        message: "Cannot close open request" } } if request.open
+      params[:helper_assignment_id] = request.closing_assignment.id
+    end
+
+    p = enforce_reassignment_params params
+    old = HelperAssignment.find p[:helper_assignment_id]
+    @assignment = reassign_request old, p[:new_helper_id], true
+    render :show
+  rescue CS198::RecordsNotValid => e
+    render status: :bad_request, json: { data: {
+      message: "Validation error",
+      details: { errors: {
+        closing_assignment: e.records[:original_assignment].errors.full_messages,
+        new_assignment: e.records[:new_assignment].errors.full_messages,
+        request: e.records[:request].errors.full_messages } }
     } }
   rescue ActiveRecord::RecordNotFound
     render status: :not_found, json: { data: {
@@ -87,7 +114,7 @@ class Lair::HelperAssignmentsController < ApplicationController
     params.permit self.class.reassignment_params
   end
 
-  def reassign_request(old_assignment, new_helper_id)
+  def reassign_request(old_assignment, new_helper_id, reopen)
     new_assignment = HelperAssignment.new helper_checkin_id: new_helper_id,
                                           help_request: old_assignment.help_request,
                                           claim_time: DateTime.now
@@ -95,13 +122,22 @@ class Lair::HelperAssignmentsController < ApplicationController
     old_assignment.close_status = "reassigned"
     old_assignment.reassignment = new_assignment
 
-    old_assignment.transaction do
-      new_assignment.save validate: false
-      old_assignment.save validate: false
+    to_save = {
+      new_assignment: new_assignment,
+      original_assignment: old_assignment
+    }
+    if reopen
+      request = old_assignment.help_request
+      request.open = true
+      to_save[:closing_assignment] = old_assignment
+      to_save[:request] = request
+    else
+      to_save[:original_assignment] = old_assignment
+    end
 
-      return new_assignment if new_assignment.valid? && old_assignment.valid?
-      fail CS198::RecordsNotValid.new original_assignment: old_assignment,
-                                      new_assignment: new_assignment
+    old_assignment.transaction do
+      save_multiple to_save
+      return new_assignment
     end
 
     new_assignment
