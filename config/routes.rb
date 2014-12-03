@@ -29,12 +29,14 @@ Rails.application.routes.draw do
           collection do
             get :current, to: "help_requests#current_assignment"
             post :reassign
+            post :reopen
           end
         end
       end
 
       opts.resources :helper_assignments, only: [:show, :index, :create] do
         post :reassign
+        post :reopen
       end
     end
   end
