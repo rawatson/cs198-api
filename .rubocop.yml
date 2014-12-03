@@ -10,6 +10,8 @@ Metrics/LineLength:
   Max: 100
 Metrics/MethodLength:
   Max: 25
+Metrics/ClassLength:
+  Max: 150
 Style/StringLiterals:
   Enabled: false
 Style/ClassAndModuleChildren:
