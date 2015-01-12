@@ -8,19 +8,22 @@ development:
   <<: *default
   database: <%= ENV['CS198_DEV_DB_DB'] %>
   username: <%= ENV['CS198_DEV_DB_USER'] %>
-  password: <%= ENV['CS198_DEV_DB_PASS'] %>
+  password: "<%= ENV['CS198_DEV_DB_PASS'] %>"
   host: <%= ENV['CS198_DEV_DB_HOST'] %>
+  port: <%= ENV['CS198_DEV_DB_PORT'] %>
 
 test:
   <<: *default
   database: <%= ENV['CS198_TEST_DB_DB'] %>
   username: <%= ENV['CS198_TEST_DB_USER'] %>
-  password: <%= ENV['CS198_TEST_DB_PASS'] %>
+  password: "<%= ENV['CS198_TEST_DB_PASS'] %>"
   host: <%= ENV['CS198_TEST_DB_HOST'] %>
+  port: <%= ENV['CS198_TEST_DB_PORT'] %>
 
 production:
   <<: *default
   database: <%= ENV['CS198_DB_DB'] %>
   username: <%= ENV['CS198_DB_USER'] %>
-  password: <%= ENV['CS198_DB_PASS'] %>
+  password: "<%= ENV['CS198_DB_PASS'] %>"
   host: <%= ENV['CS198_DB_HOST'] %>
+  port: <%= ENV['CS198_DB_PORT'] %>
