@@ -20,6 +20,11 @@ class Lair::HelpersController < ApplicationController
     @helper = HelperCheckin.new person: p
     if @helper.valid?
       @helper.save
+
+      # TODO: remove when legacy services are phased out
+      # Add helper in the old LaIR queue to avoid sending email notifications.
+      legacy_db.query(
+        "INSERT INTO HelpersOnDuty VALUES (#{p.id})") if ENV['RAILS_ENV'] == 'production'
       render :show, status: :created
     else
       # TODO: handle errors more robustly
@@ -40,6 +45,11 @@ class Lair::HelpersController < ApplicationController
       h.check_out_time = DateTime.now
       h.checked_out = true
       h.save
+
+      # TODO: remove when legacy services are phased out
+      # Add helper in the old LaIR queue to avoid sending email notifications.
+      legacy_db.query(
+        "DELETE FROM HelpersOnDuty WHERE Helper=#{h.person.id}") if ENV['RAILS_ENV'] == 'production'
     end
 
     head :no_content
