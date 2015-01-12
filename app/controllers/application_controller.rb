@@ -11,11 +11,24 @@ class ApplicationController < ActionController::API
 
   protected
 
+  def legacy_db
+    opts = {
+      host: ENV['LEGACY_CS198_DB_HOST'],
+      username: ENV['LEGACY_CS198_DB_USER'],
+      password: ENV['LEGACY_CS198_DB_PASS'],
+      port: ENV['LEGACY_CS198_DB_PORT'],
+      database: ENV['LEGACY_CS198_DB_DB']
+    }.delete_if { |_, v| v.nil? }
+
+    Mysql2::Client.new opts
+  end
+
   WHITELISTED_DOMAINS = [
     "lair-queue-prod-f9m6cpgaut.elasticbeanstalk.com",
     "cs198.stanford.edu",
     "localhost:8080"
   ]
+
   # To allow requests from whitelisted domains to bypass the Same-Origin Policy
   def cors_header
     origin = request.headers['Origin']
