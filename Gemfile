@@ -8,6 +8,7 @@ gem 'jbuilder'
 
 group :production do
   gem 'puma'    # app server
+  gem 'mysql2'
 end
 
 group :development, :test do
