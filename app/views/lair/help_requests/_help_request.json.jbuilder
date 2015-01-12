@@ -7,6 +7,7 @@ end unless defined?(render_person) && !render_person
 json.helper do
   json.partial! 'lair/helpers/helper',
                 helper: request.current_assignment.helper_checkin,
-                render_help_request: false
+                render_help_request: false,
+                render_person: !defined?(render_person) || render_person
 end unless (defined?(render_helper) && !render_helper) ||
   request.current_assignment.nil?
