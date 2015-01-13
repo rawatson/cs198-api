@@ -1,7 +1,7 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  pool: <%= ENV['MAX_THREADS'] %>
+  pool: <%= ENV['MAX_THREADS'] || 16 %>
   timeout: 5000
 
 development:
