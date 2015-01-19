@@ -1,6 +1,9 @@
 Rails.application.routes.draw do
   with_options(format: 'json', except: [:new, :edit]) do |opts|
-    opts.resources :people, except: [:new, :edit, :create, :destroy]
+    opts.resources :courses, except: [:new, :edit, :create, :update, :destroy]
+    opts.resources :people, except: [:new, :edit, :create, :destroy] do
+      opts.resources :courses, except: [:new, :edit, :create, :update, :destroy]
+    end
 
     namespace :lair do
       get :status, to: "status#status", format: :json
