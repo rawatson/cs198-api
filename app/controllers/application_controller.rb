@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::API
   include ParamsHelper
+  include RenderHelper
   include SaveHelper
   include Errors
 
@@ -39,18 +40,6 @@ class ApplicationController < ActionController::API
       headers["Access-Control-Allow-Origin"] = origin # always pass if testing
     end
     headers["Access-Control-Allow-Methods"] = "GET,PUT,POST,DELETE"
-  end
-
-  def render_missing_params(missing, required)
-    render status: :bad_request, json: { data: {
-      message: "Missing required parameter(s)",
-      details: { missing: missing, required: required } } }
-  end
-
-  def render_validation_error(instance)
-    render status: :bad_request, json: { data: {
-      message: "Validation error",
-      details: { errors: instance.errors.full_messages } } }
   end
 
   private
