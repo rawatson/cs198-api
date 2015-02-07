@@ -149,8 +149,8 @@ describe Lair::HelpRequestsController do
       assert_response :bad_request
       data = JSON.parse(@response.body, symbolize_names: true)[:data]
 
-      data[:message].must_equal "Validation error"
-      data[:details][:errors][:assignment].must_include \
+      data[:message].must_equal "Multi-record validation error"
+      data[:details][:records][:assignment][:errors].must_include \
         'Close status must be one of ["resolved", "reassigned", "left"]'
 
       req = HelpRequest.find r.id

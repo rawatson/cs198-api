@@ -165,8 +165,9 @@ describe Lair::HelperAssignmentsController do
       post :reassign, format: :json, helper_assignment_id: old.id, new_helper_id: new_helper.id
       assert_response :bad_request
       data = JSON.parse(@response.body, symbolize_names: true)[:data]
-      data[:message].must_equal "Validation error"
-      data[:details][:errors][:new_assignment].must_include "Helper checkin is already assigned"
+      data[:message].must_equal "Multi-record validation error"
+      data[:details][:records][:new_assignment][:errors].must_include \
+        "Helper checkin is already assigned"
 
       # check that old assignment is still current
       HelperAssignment.find(old.id).close_status.must_be :nil?

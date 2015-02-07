@@ -49,12 +49,7 @@ class Lair::HelperAssignmentsController < ApplicationController
     @assignment = reassign_request old, p[:new_helper_id], false
     render :show
   rescue CS198::RecordsNotValid => e
-    render status: :bad_request, json: { data: {
-      message: "Validation error",
-      details: { errors: {
-        original_assignment: e.records[:original_assignment].errors.full_messages,
-        new_assignment: e.records[:new_assignment].errors.full_messages } }
-    } }
+    render_validation_error e.records
   rescue ActiveRecord::RecordNotFound
     render status: :not_found, json: { data: {
       message: "Helper assignment not found" } }
@@ -75,13 +70,7 @@ class Lair::HelperAssignmentsController < ApplicationController
     @assignment = reassign_request old, p[:new_helper_id], true
     render :show
   rescue CS198::RecordsNotValid => e
-    render status: :bad_request, json: { data: {
-      message: "Validation error",
-      details: { errors: {
-        closing_assignment: e.records[:original_assignment].errors.full_messages,
-        new_assignment: e.records[:new_assignment].errors.full_messages,
-        request: e.records[:request].errors.full_messages } }
-    } }
+    render_validation_error e.records
   rescue ActiveRecord::RecordNotFound
     render status: :not_found, json: { data: {
       message: "Helper assignment not found" } }
@@ -135,11 +124,7 @@ class Lair::HelperAssignmentsController < ApplicationController
       to_save[:original_assignment] = old_assignment
     end
 
-    old_assignment.transaction do
-      save_multiple to_save
-      return new_assignment
-    end
-
+    save_multiple to_save
     new_assignment
   end
 end
