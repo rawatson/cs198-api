@@ -1,11 +1,19 @@
 # Helpers for saving models.
 module SaveHelper
   include Errors
-  def save_multiple(instances)
+  def save_multiple(records)
     ActiveRecord::Base.transaction do
-      instances.values.each { |i| i.save validate: false }
-      return unless instances.values.map(&:valid?).include? false
-      fail CS198::RecordsNotValid.new instances
+      if records.is_a? Hash
+        records.each { |_, i| i.save validate: false }
+        return unless records.map { |_, i| i.valid? }.include? false
+      elsif records.is_a? Array
+        records.each { |i| i.save validate: false }
+        return unless records.map(&:valid?).include? false
+      else
+        fail "records must be a collection of records"
+      end
+
+      fail CS198::RecordsNotValid.new records
     end
   end
 end
