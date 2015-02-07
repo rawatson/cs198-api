@@ -1,4 +1,6 @@
 class Lair::HelpersController < ApplicationController
+  HELPER_SIGNIN_ACTION = 21
+  HELPER_SIGNOUT_ACTION = 22
   def index
     if params[:inactive]
       @helpers = HelperCheckin.all.includes(:person)
@@ -21,10 +23,17 @@ class Lair::HelpersController < ApplicationController
     if @helper.valid?
       @helper.save
 
-      # TODO: remove when legacy services are phased out
-      # Add helper in the old LaIR queue to avoid sending email notifications.
-      legacy_db.query(
-        "INSERT INTO HelpersOnDuty VALUES (#{p.id})") if ENV['RAILS_ENV'] == 'production'
+      if ENV['RAILS_ENV'] == 'production'
+        # TODO: remove when legacy services are phased out
+        # Add helper in the old LaIR queue to avoid sending email notifications.
+        legacy_db.query(
+          "INSERT INTO HelpersOnDuty VALUES (#{p.id})")
+
+        # Add activity log action for legacy analytics purposes
+        legacy_db.query(
+          "INSERT INTO ActivityLog (Person, Action, Time) VALUES " \
+          "(#{p.id}, #{HELPER_SIGNIN_ACTION}, '#{DateTime.now}')")
+      end
       render :show, status: :created
     else
       # TODO: handle errors more robustly
@@ -48,8 +57,15 @@ class Lair::HelpersController < ApplicationController
 
       # TODO: remove when legacy services are phased out
       # Add helper in the old LaIR queue to avoid sending email notifications.
-      legacy_db.query(
-        "DELETE FROM HelpersOnDuty WHERE Helper=#{h.person.id}") if ENV['RAILS_ENV'] == 'production'
+      if ENV['RAILS_ENV'] == 'production'
+        legacy_db.query(
+          "DELETE FROM HelpersOnDuty WHERE Helper=#{h.person.id}")
+
+        # Add activity log action for legacy analytics purposes
+        legacy_db.query(
+          "INSERT INTO ActivityLog (Person, Action, Time) VALUES " \
+          "(#{h.person.id}, #{HELPER_SIGNOUT_ACTION}, '#{DateTime.now}')")
+      end
     end
 
     head :no_content
