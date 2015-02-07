@@ -6,16 +6,16 @@ module RenderHelper
       details: { missing: missing, required: required } } }
   end
 
-  def render_validation_error(instance)
-    if instance.is_a? ActiveRecord::Base
+  def render_validation_error(records)
+    if records.is_a? ActiveRecord::Base
       render status: :bad_request, json: { data: {
         message: "Validation error",
-        details: { errors: instance.errors.full_messages } } }
+        details: { errors: records.errors.full_messages } } }
     else
-      if instance.is_a? Array
-        records_errors = instance.map { |i| { errors: i.errors.full_messages } }
-      elsif instance.is_a? Hash
-        records_errors = Hash[instance.map { |k, v| [k, { errors: v.errors.full_messages }] }]
+      if records.is_a? Array
+        records_errors = records.map { |i| { errors: i.errors.full_messages } }
+      elsif records.is_a? Hash
+        records_errors = Hash[records.map { |k, v| [k, { errors: v.errors.full_messages }] }]
       else
         fail "render_validation_error must receive a collection of records or a record"
       end
