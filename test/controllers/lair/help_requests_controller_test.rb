@@ -47,7 +47,7 @@ describe Lair::HelpRequestsController do
       ids.must_include help_requests(:cs106a_term_1_student_1_help_closed).id
 
       data.each do |req|
-        DateTime.parse(req[:created_at]).must_be :>, DateTime.parse(timestamp)
+        DateTime.parse(req[:updated_at]).must_be :>, DateTime.parse(timestamp)
       end
     end
 
@@ -149,8 +149,8 @@ describe Lair::HelpRequestsController do
       assert_response :bad_request
       data = JSON.parse(@response.body, symbolize_names: true)[:data]
 
-      data[:message].must_equal "Validation error"
-      data[:details][:errors][:assignment].must_include \
+      data[:message].must_equal "Multi-record validation error"
+      data[:details][:records][:assignment][:errors].must_include \
         'Close status must be one of ["resolved", "reassigned", "left"]'
 
       req = HelpRequest.find r.id

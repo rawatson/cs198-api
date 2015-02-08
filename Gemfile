@@ -7,7 +7,8 @@ gem 'email_validator'
 gem 'jbuilder'
 
 group :production do
-  gem 'unicorn'     # app server
+  gem 'puma'    # app server
+  gem 'mysql2'
 end
 
 group :development, :test do

@@ -1,1 +1,1 @@
-json.data { json.partial! "helper", helper: @helper, current_assignment: true }
+json.data { json.partial! "lair/helpers/helper", helper: @helper }

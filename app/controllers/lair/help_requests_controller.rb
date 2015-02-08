@@ -9,7 +9,7 @@ class Lair::HelpRequestsController < ApplicationController
       return render json: { data: { count: @requests.count } } if count
     else
       @requests = HelpRequest.where(
-        "open = :open AND created_at > :since", open: open, since: DateTime.parse(since)
+        "open = :open AND updated_at > :since", open: open, since: DateTime.parse(since)
       ).order(created_at: :desc)
       return render json: { data: { count: @requests.count } } if count
       @requests = @requests.includes(:person, :course).reverse
@@ -65,18 +65,13 @@ class Lair::HelpRequestsController < ApplicationController
     assignment.close_status = params[:reason]
     assignment.close_time = DateTime.now
 
-    close_request(@request, assignment)
+    save_multiple(assignment: assignment, request: @request)
     head status: :no_content
   rescue ActiveRecord::RecordNotFound
     render status: :not_found, json: { data: {
       message: "Help request not found" } }
   rescue CS198::RecordsNotValid => e
-    render status: :bad_request, json: { data: {
-      message: "Validation error",
-      details: { errors: {
-        request: e.records[:request].errors.full_messages,
-        assignment: e.records[:assignment].errors.full_messages } }
-    } }
+    render_validation_error e.records
   rescue ActionController::ParameterMissing => e
     render_missing_params e.param, self.class.closing_params
   end
@@ -100,16 +95,6 @@ class Lair::HelpRequestsController < ApplicationController
   class << self
     attr_reader :creation_params
     attr_reader :closing_params
-  end
-
-  def close_request(request, assignment)
-    request.transaction do
-      assignment.save validate: false
-      request.save validate: false
-
-      return if assignment.valid? && request.valid?
-      fail CS198::RecordsNotValid.new assignment: assignment, request: request
-    end
   end
 
   def helper_create_params(params)

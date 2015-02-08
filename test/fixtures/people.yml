@@ -1,9 +1,9 @@
 staff_1:
   first_name: 'Marty'
   last_name: 'Stepp'
-  email: 'staff_one@stanford.edu'
+  email: 'marty@stanford.edu'
   suid: '11'
-  sunet_id: 'staffuserone'
+  sunet_id: 'mstepp'
   citizen_status: 'US Citizen'
   staff: true
   active: true
@@ -11,9 +11,9 @@ staff_1:
 staff_2:
   first_name: 'Cynthia'
   last_name: 'Lee'
-  email: 'staff_two@stanford.edu'
+  email: 'cynthia@stanford.edu'
   suid: '21'
-  sunet_id: 'staffusertwo'
+  sunet_id: 'clee'
   citizen_status: 'Permanent Resident'
   staff: true
   active: true

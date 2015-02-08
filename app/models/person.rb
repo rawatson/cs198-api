@@ -10,4 +10,19 @@ class Person < ActiveRecord::Base
   validates :sunet_id, uniqueness: true
   validates :citizen_status, inclusion: { in: @citizen_types }, allow_nil: true
   validates :email, email: true
+
+  def self.find_by_id_flexible(id)
+    p = find_by id: id
+    p = find_by sunet_id: id.downcase if p.nil?
+    p = find_by suid: id if p.nil?
+    p
+  end
+
+  def courses_taking
+    enrollments.where(position: "student").map(&:course)
+  end
+
+  def courses_staffing
+    enrollments.where.not(position: "student").map(&:course)
+  end
 end

@@ -24,6 +24,10 @@ class HelperAssignment < ActiveRecord::Base
     def close_statuses
       @close_status_types.keys.map(&:to_s)
     end
+
+    def terminating_statuses
+      @close_status_types.select { |_, v| v }.keys.map(&:to_s)
+    end
   end
 
   validates :help_request, presence: true,

@@ -1,3 +1,1 @@
-json.data do
-  json.partial! "person_limited", person: @person
-end
+json.data { json.partial! "people/person_limited", person: @person }
