@@ -134,7 +134,7 @@ describe Lair::HelperAssignmentsController do
   end
 
   describe :reassign do
-    it "should require the correct parameters" do
+    it "requires the correct parameters" do
       old = helper_assignments :staff_5_open_assignment
       new_helper = helper_checkins :staff_6_checkin
       possible_missing = %w(helper_assignment_id new_helper_id)
@@ -158,7 +158,7 @@ describe Lair::HelperAssignmentsController do
       end
     end
 
-    it "should deny reassignment to an already assigned helper" do
+    it "denies reassignment to an already assigned helper" do
       old = helper_assignments :staff_5_open_assignment
       new_helper = helper_checkins :staff_1_checkin # already has a checkin
 
@@ -174,7 +174,7 @@ describe Lair::HelperAssignmentsController do
       HelpRequest.find(old.help_request.id).current_assignment.id.must_equal old.id
     end
 
-    it "should create a new assignment and close the old one with status=reassigned" do
+    it "creates a new assignment and closes the old one with status=reassigned" do
       old = helper_assignments :staff_5_open_assignment
       new_helper = helper_checkins :staff_6_checkin # already has a checkin
 
@@ -188,6 +188,53 @@ describe Lair::HelperAssignmentsController do
       old_assignment = HelperAssignment.find(old.id)
       old_assignment.close_status.must_equal "reassigned"
       old_assignment.reassignment_id.must_equal data[:id]
+    end
+  end
+
+  describe :reopen do
+    # query on which record?
+    [:helper_assignment, :help_request].each do |type|
+      it "denies reopening an open request when querying by #{type}" do
+        old_assignment = helper_assignments :staff_5_open_assignment
+        old_help_request = old_assignment.help_request
+        new_helper = helper_checkins :staff_6_checkin
+
+        if type == :helper_assignment
+          params = { helper_assignment_id: old_assignment.id }
+        elsif type == :help_request
+          params = { help_request_id: old_help_request.id }
+        end
+
+        params[:format] = :json
+        params[:new_helper_id] = new_helper.id
+        post :reopen, params
+        assert_response :forbidden
+        data = JSON.parse(@response.body, symbolize_names: true)[:data]
+        data[:message].must_equal "Cannot close open request"
+      end
+
+      it "creates a new assignment and changes the old one with status=reassigned when querying "\
+        "by #{type}" do
+        old_assignment = helper_assignments :staff_1_left_assignment
+        old_help_request = old_assignment.help_request
+        new_helper = helper_checkins :staff_6_checkin
+
+        if type == :helper_assignment
+          params = { helper_assignment_id: old_assignment.id }
+        elsif type == :help_request
+          params = { help_request_id: old_help_request.id }
+        end
+
+        params[:format] = :json
+        params[:new_helper_id] = new_helper.id
+        post :reopen, params
+        assert_response :ok
+        data = JSON.parse(@response.body, symbolize_names: true)[:data]
+        data[:helper][:id].must_equal new_helper.id
+        data[:help_request][:id].must_equal old_help_request.id
+        data[:help_request][:open].must_equal true
+        data[:close_status].must_equal nil
+      end
     end
   end
 end
