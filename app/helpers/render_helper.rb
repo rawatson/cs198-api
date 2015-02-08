@@ -17,7 +17,7 @@ module RenderHelper
       elsif records.is_a? Hash
         records_errors = Hash[records.map { |k, v| [k, { errors: v.errors.full_messages }] }]
       else
-        fail "render_validation_error must receive a collection of records or a record"
+        fail "records must be a collection of records or a single record"
       end
 
       render status: :bad_request, json: { data: {
