@@ -13,7 +13,8 @@ class Person < ActiveRecord::Base
 
   def self.find_by_id_flexible(id)
     p = find_by id: id
-    p = find_by sunet_id: id if p.nil?
+    p = find_by sunet_id: id.downcase if p.nil?
+    p = find_by suid: id if p.nil?
     p
   end
 
