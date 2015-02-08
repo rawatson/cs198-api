@@ -8,5 +8,5 @@ end
 json.helper do
   json.partial! 'lair/helpers/helper',
                 helper: assignment.helper_checkin,
-                render_help_request: false
+                render_help_requests: false
 end

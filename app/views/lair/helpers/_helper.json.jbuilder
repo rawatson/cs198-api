@@ -1,5 +1,9 @@
 json.call helper, :id, :checked_out, :check_out_time
-json.person { json.partial! "people/person_limited", person: helper.person }
+json.person do
+  json.partial! "people/person_limited",
+                person: helper.person,
+                render_help_requests: defined?(render_help_requests) && render_help_requests
+end unless defined?(render_person) && !render_person
 json.check_in_time helper.created_at
 json.help_request do
   json.partial! 'lair/help_requests/help_request',

@@ -46,15 +46,42 @@ class Lair::HelperAssignmentsController < ApplicationController
 
     p = enforce_reassignment_params params
     old = HelperAssignment.find p[:helper_assignment_id]
-    @assignment = reassign_request old, p[:new_helper_id]
+    @assignment = reassign_request old, p[:new_helper_id], false
     render :show
   rescue CS198::RecordsNotValid => e
-    render status: :bad_request, json: { data: {
-      message: "Validation error",
-      details: { errors: {
-        original_assignment: e.records[:original_assignment].errors.full_messages,
-        new_assignment: e.records[:new_assignment].errors.full_messages } }
-    } }
+    render_validation_error e.records
+  rescue ActiveRecord::RecordNotFound
+    render status: :not_found, json: { data: {
+      message: "Helper assignment not found" } }
+  rescue ActionController::ParameterMissing => e
+    render_missing_params e.param, self.class.reassignment_params
+  end
+
+  def helper_assignment_from_request(request)
+    if request.open
+      request.current_assignment
+    else
+      request.closing_assignment
+    end
+  end
+
+  def reopen
+    request = nil
+    if params[:helper_assignment_id].nil? && !params[:help_request_id].nil?
+      request = HelpRequest.find params[:help_request_id]
+      params[:helper_assignment_id] = helper_assignment_from_request(request).id
+    end
+
+    p = enforce_reassignment_params params
+    old_assignment = HelperAssignment.find p[:helper_assignment_id]
+    request = old_assignment.help_request if request.nil?
+
+    return render status: :forbidden, json: { data: {
+      message: "Cannot close open request" } } if request.open
+    @assignment = reassign_request old_assignment, p[:new_helper_id], true
+    render :show
+  rescue CS198::RecordsNotValid => e
+    render_validation_error e.records
   rescue ActiveRecord::RecordNotFound
     render status: :not_found, json: { data: {
       message: "Helper assignment not found" } }
@@ -87,23 +114,28 @@ class Lair::HelperAssignmentsController < ApplicationController
     params.permit self.class.reassignment_params
   end
 
-  def reassign_request(old_assignment, new_helper_id)
-    new_assignment = HelperAssignment.new helper_checkin_id: new_helper_id,
+  def reassign_request(old_assignment, new_helper_id, reopen)
+    new_assignment = HelperAssignment.new helper_checkin: HelperCheckin.find(new_helper_id),
                                           help_request: old_assignment.help_request,
                                           claim_time: DateTime.now
-    old_assignment.close_time = new_assignment.claim_time
+    old_assignment.close_time = new_assignment.claim_time unless reopen
     old_assignment.close_status = "reassigned"
     old_assignment.reassignment = new_assignment
 
-    old_assignment.transaction do
-      new_assignment.save validate: false
-      old_assignment.save validate: false
-
-      return new_assignment if new_assignment.valid? && old_assignment.valid?
-      fail CS198::RecordsNotValid.new original_assignment: old_assignment,
-                                      new_assignment: new_assignment
+    to_save = {
+      new_assignment: new_assignment,
+      original_assignment: old_assignment
+    }
+    if reopen
+      request = old_assignment.help_request
+      request.open = true
+      to_save[:closing_assignment] = old_assignment
+      to_save[:request] = request
+    else
+      to_save[:original_assignment] = old_assignment
     end
 
+    save_multiple to_save
     new_assignment
   end
 end
