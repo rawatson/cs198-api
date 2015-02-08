@@ -11,9 +11,19 @@ class ApplicationController < ActionController::API
 
   protected
 
+  WHITELISTED_DOMAINS = [
+    "lair-queue-prod-f9m6cpgaut.elasticbeanstalk.com",
+    "cs198.stanford.edu",
+    "localhost:8080"
+  ]
   # To allow requests from whitelisted domains to bypass the Same-Origin Policy
   def cors_header
-    headers["Access-Control-Allow-Origin"] = "*" # TODO: read origin header, check if whitelisted
+    origin = request.headers['Origin']
+    if ENV['RAILS_ENV'] == 'production'
+      headers["Access-Control-Allow-Origin"] = origin if check_origin origin
+    else
+      headers["Access-Control-Allow-Origin"] = origin # always pass if testing
+    end
     headers["Access-Control-Allow-Methods"] = "GET,PUT,POST,DELETE"
   end
 
@@ -30,6 +40,10 @@ class ApplicationController < ActionController::API
   end
 
   private
+
+  def check_origin(origin)
+    !WHITELISTED_DOMAINS.map { |d| Regexp.new("https?://#{d}").match origin }.reject(&:nil?).empty?
+  end
 
   def convert_boolean_params
     self.params = coerce_boolean_strings params unless params.nil?
