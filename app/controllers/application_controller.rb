@@ -37,7 +37,7 @@ class ApplicationController < ActionController::API
     if ENV['RAILS_ENV'] == 'production'
       headers["Access-Control-Allow-Origin"] = origin if check_origin origin
     else
-      headers["Access-Control-Allow-Origin"] = origin # always pass if testing
+      headers["Access-Control-Allow-Origin"] = origin unless origin.nil? # always pass if testing
     end
     headers["Access-Control-Allow-Methods"] = "GET,PUT,POST,DELETE"
   end
