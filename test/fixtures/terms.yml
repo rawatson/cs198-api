@@ -1,0 +1,7 @@
+<% (2000..2015).each do |year| %>
+  <% %w(Autumn Winter Spring Summer).each do |title| %>
+    term_<%= "#{title}_#{year}" %>:
+      year: <%= "#{year.to_s}-#{(year+1).to_s}" %>
+      title: <%= title %>
+  <% end %>
+<% end %>

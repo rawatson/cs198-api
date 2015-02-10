@@ -1,0 +1,45 @@
+cs106a_term_1_lecturer:
+  position: "lecturer"
+  seniority: 2
+  person: staff_1
+  course: cs106a_term_1
+cs106a_term_2_lecturer:
+  position: "lecturer"
+  seniority: 2
+  person: staff_2
+  course: cs106a_term_1
+cs106a_term_1_sl:
+  position: "section leader"
+  seniority: 1
+  person: staff_3
+  course: cs106a_term_1
+cs106a_term_1_sl_staff_5:
+  position: "section leader"
+  seniority: 1
+  person: staff_5
+  course: cs106a_term_1
+cs106a_term_2_sl:
+  position: "section leader"
+  seniority: 1
+  person: staff_3
+  course: cs106a_term_2
+cs106a_term_1_student_1:
+  position: "student"
+  seniority: 0
+  person: student_1
+  course: cs106a_term_1
+cs106a_term_2_student_2:
+  position: "student"
+  seniority: 0
+  person: student_2
+  course: cs106a_term_2
+cs106a_term_2_student_3:
+  position: "student"
+  seniority: 0
+  person: student_3
+  course: cs106a_term_2
+cs106a_term_2_student_4:
+  position: "student"
+  seniority: 0
+  person: student_4
+  course: cs106a_term_2
