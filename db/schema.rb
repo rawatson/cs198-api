@@ -68,6 +68,15 @@ ActiveRecord::Schema.define(version: 20150304004345) do
   add_index "helper_checkins", ["checked_out"], name: "index_helper_checkins_on_checked_out", using: :btree
   add_index "helper_checkins", ["person_id"], name: "index_helper_checkins_on_person_id", using: :btree
 
+  create_table "helper_shifts", force: true do |t|
+    t.datetime "start_time",                   null: false
+    t.integer  "duration",                     null: false
+    t.boolean  "regular_shift", default: true, null: false
+    t.integer  "person_id"
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
+  end
+
   create_table "lair_states", force: true do |t|
     t.boolean  "signups_enabled", default: false, null: false
     t.datetime "created_at",                      null: false
