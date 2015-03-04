@@ -3,6 +3,7 @@ Rails.application.routes.draw do
     opts.resources :courses, except: [:new, :edit, :create, :update, :destroy]
     opts.resources :people, except: [:new, :edit, :create, :destroy] do
       opts.resources :courses, except: [:new, :edit, :create, :update, :destroy]
+      opts.resources :lair_shifts, controller: :"lair/shifts", only: [:index, :create]
     end
 
     namespace :lair do
@@ -11,21 +12,15 @@ Rails.application.routes.draw do
 
       opts.resources :helpers, except: [:new, :edit, :update] do
         member do
-          # get a single helper's shifts
-          opts.resources :shifts
-
           opts.resources :helper_assignments, path: "assignments", only: [:index] do
             collection do
               get :current, to: "helpers#current_assignment"
             end
           end
         end
-
-        collection do
-          # get total helper schedule
-          opts.get :shifts
-        end
       end
+
+      opts.resources :shifts, except: [:new, :edit, :show]
 
       opts.resources :help_requests do
         opts.resources :helper_assignments, path: "assignments", only: [:index, :create] do
