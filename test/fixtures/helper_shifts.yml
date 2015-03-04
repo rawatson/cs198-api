@@ -1,0 +1,31 @@
+staff_1_shift_1:
+  person: staff_1
+  start_time: <%= DateTime.now.to_s :db %>
+  duration: <%= 2.hours %>
+
+staff_1_shift_3:
+  person: staff_1
+  start_time: <%= (DateTime.now + 2.days).to_s :db %>
+  duration: <%= 2.hours %>
+  regular_shift: false
+
+staff_1_shift_3:
+  person: staff_1
+  start_time: <%= (DateTime.now + 4.days).to_s :db %>
+  duration: <%= 2.hours %>
+
+staff_2_shift_1:
+  person: staff_2
+  start_time: <%= (DateTime.now + 2.days).to_s :db %>
+  duration: <%= 2.hours %>
+
+staff_2_shift_2:
+  person: staff_2
+  start_time: <%= (DateTime.now + 6.days).to_s :db %>
+  duration: <%= 4.hours %>
+
+staff_3_shift:
+  person: staff_3
+  start_time: <%= (DateTime.now + 4.days).to_s :db %>
+  duration: <%= 1.hours %>
+  regular_shift: false
