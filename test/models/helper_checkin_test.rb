@@ -73,4 +73,35 @@ describe HelperCheckin do
       end
     end
   end
+
+  describe :find_latest_by_person do
+    it "finds the latest element by person" do
+      person = people :staff_2
+      new_checkin = HelperCheckin.new person: person
+      new_checkin.must_be :valid?
+      new_checkin.save
+
+      retrieved = HelperCheckin.find_latest_by_person person
+      retrieved.id.must_equal new_checkin.id
+
+      new_checkin.checked_out = true
+      new_checkin.save
+
+      retrieved = HelperCheckin.find_latest_by_person person
+      retrieved.id.must_equal new_checkin.id
+
+      old_checkin = new_checkin
+      new_checkin = HelperCheckin.new person: person
+      new_checkin.save
+      old_checkin.id.wont_equal new_checkin.id
+
+      retrieved = HelperCheckin.find_latest_by_person person
+      retrieved.id.must_equal new_checkin.id
+    end
+
+    it "doesn't fail if person doesn't have any checkins" do
+      retrieved = HelperCheckin.find_latest_by_person people(:student_1)
+      retrieved.must_be_nil
+    end
+  end
 end

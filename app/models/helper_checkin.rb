@@ -2,6 +2,10 @@ class HelperCheckin < ActiveRecord::Base
   belongs_to :person
   has_many :helper_assignments
 
+  def self.find_latest_by_person(person)
+    where(person: person).order("created_at").last
+  end
+
   def current_assignment
     helper_assignments.find_by close_status: nil
   end
