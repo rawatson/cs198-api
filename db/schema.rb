@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150112004752) do
+ActiveRecord::Schema.define(version: 20150304004345) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -58,7 +58,7 @@ ActiveRecord::Schema.define(version: 20150112004752) do
   end
 
   create_table "helper_checkins", force: true do |t|
-    t.integer  "person_id"
+    t.integer  "person_id",                      null: false
     t.boolean  "checked_out",    default: false, null: false
     t.datetime "check_out_time"
     t.datetime "created_at"
@@ -66,6 +66,7 @@ ActiveRecord::Schema.define(version: 20150112004752) do
   end
 
   add_index "helper_checkins", ["checked_out"], name: "index_helper_checkins_on_checked_out", using: :btree
+  add_index "helper_checkins", ["person_id"], name: "index_helper_checkins_on_person_id", using: :btree
 
   create_table "lair_states", force: true do |t|
     t.boolean  "signups_enabled", default: false, null: false
